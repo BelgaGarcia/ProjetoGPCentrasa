@@ -59,6 +59,19 @@ referenciam Web e Infrastructure para validar a composição completa.
   formulários continuam funcionais sem scripts.
 - Os ícones são um sprite SVG local e não dependem de fontes ou CDN.
 
+## Módulo de pendências
+
+- `PendingTaskService` concentra validações, transições, ordenação e gravação
+  do histórico na mesma unidade de trabalho.
+- `IPendingTaskRepository` é específico do agregado e sua implementação EF
+  projeta as listagens com filtros e paginação.
+- O controller traduz HTTP e mensagens; view models com Data Annotations
+  cuidam da entrada, sem expor entidades EF aos formulários.
+- As regras de atraso e da janela inclusiva de sete dias são puras e usam
+  `TimeProvider`, permitindo testes determinísticos.
+- A atualização parcial dos filtros é uma melhoria progressiva sobre formulários
+  GET; o modo de apresentação usa um layout Razor independente.
+
 ## Decisões registradas
 
 - [ADR 0001 — Monólito modular](decisions/0001-modular-monolith.md)

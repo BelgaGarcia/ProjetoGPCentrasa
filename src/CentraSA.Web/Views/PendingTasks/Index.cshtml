@@ -1,0 +1,108 @@
+@model CentraSA.Web.ViewModels.PendingTasks.PendingTaskIndexViewModel
+@{
+    ViewData["Title"] = "Pendências";
+}
+
+<header class="page-header">
+    <div class="page-header__copy">
+        <span class="eyebrow">Operação diária</span>
+        <h1>Pendências da equipe</h1>
+        <p>Registre, priorize e acompanhe tudo o que precisa avançar.</p>
+    </div>
+    <div class="page-actions">
+        <a class="button button--ghost" asp-action="Archived">Arquivadas</a>
+        <a class="button button--secondary" asp-action="Presentation">
+            <svg class="icon" aria-hidden="true"><use href="#icon-presentation"></use></svg>
+            Apresentar
+        </a>
+        <a class="button button--primary" asp-action="Create">
+            <svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>
+            Nova pendência
+        </a>
+    </div>
+</header>
+
+<section class="surface-card quick-task" aria-labelledby="quick-task-title">
+    <div>
+        <span class="eyebrow">Captura rápida</span>
+        <h2 id="quick-task-title">Adicionar à lista</h2>
+    </div>
+    <form asp-action="QuickCreate" method="post" class="quick-task__form">
+        <div class="field-group quick-task__title">
+            <label class="visually-hidden" for="quick-title">Título da nova pendência</label>
+            <input id="quick-title" name="Title" class="form-control" maxlength="200"
+                   placeholder="O que precisa ser feito?" required />
+        </div>
+        <div class="field-group">
+            <label class="visually-hidden" for="quick-area">Área responsável</label>
+            <select id="quick-area" name="ResponsibleAreaId" class="form-select" required>
+                <option value="">Área responsável</option>
+                @foreach (var area in Model.Data.Options.Areas)
+                {
+                    <option value="@area.Id">@area.Name</option>
+                }
+            </select>
+        </div>
+        <div class="field-group">
+            <label class="visually-hidden" for="quick-due-date">Prazo</label>
+            <input id="quick-due-date" name="DueDate" type="date" class="form-control" title="Prazo" />
+        </div>
+        <button class="button button--primary" type="submit">Adicionar</button>
+    </form>
+</section>
+
+<form method="get" class="surface-card task-filters" data-async-filter data-target="#pending-task-results">
+    <div class="task-filters__search">
+        <label for="task-search">Buscar</label>
+        <input id="task-search" asp-for="Search" class="form-control" placeholder="Título, descrição ou origem" data-filter-search />
+    </div>
+    <div>
+        <label asp-for="AreaId">Área</label>
+        <select asp-for="AreaId" class="form-select">
+            <option value="">Todas</option>
+            @foreach (var area in Model.Data.Options.Areas)
+            {
+                <option value="@area.Id">@area.Name</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label asp-for="PersonId">Pessoa</label>
+        <select asp-for="PersonId" class="form-select">
+            <option value="">Todas</option>
+            @foreach (var person in Model.Data.Options.People)
+            {
+                <option value="@person.Id">@person.Name</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label asp-for="StatusId">Status</label>
+        <select asp-for="StatusId" class="form-select">
+            <option value="">Todos</option>
+            @foreach (var status in Model.Data.Options.Statuses)
+            {
+                <option value="@status.Id">@status.Name</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label asp-for="DueFilter">Prazo</label>
+        <select asp-for="DueFilter" class="form-select">
+            <option value="All">Todos</option>
+            <option value="Overdue">Atrasadas</option>
+            <option value="DueSoon">Próximos 7 dias</option>
+            <option value="NoDueDate">Sem prazo</option>
+        </select>
+    </div>
+    <label class="task-filters__toggle">
+        <input asp-for="HideCompleted" class="form-check-input" />
+        Ocultar concluídas
+    </label>
+    <button type="submit" class="button button--secondary">Filtrar</button>
+    <a asp-action="Index" class="button button--ghost">Limpar</a>
+</form>
+
+<div id="pending-task-results" aria-live="polite">
+    <partial name="_TaskList" model="Model" />
+</div>

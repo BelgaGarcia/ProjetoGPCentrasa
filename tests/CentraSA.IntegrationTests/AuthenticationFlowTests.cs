@@ -1,8 +1,11 @@
 using System.Net;
 using System.Text.RegularExpressions;
+using CentraSA.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CentraSA.IntegrationTests;
 
@@ -87,6 +90,46 @@ public sealed partial class AuthenticationFlowTests
             Assert.Contains("aria-label=\"Navegação principal\"", authenticatedHtml, StringComparison.Ordinal);
             Assert.Contains("data-navigation-toggle", authenticatedHtml, StringComparison.Ordinal);
             Assert.Contains("Módulos operacionais", authenticatedHtml, StringComparison.Ordinal);
+
+            string pendingTasksHtml = await client.GetStringAsync(new Uri("/pendencias", UriKind.Relative));
+            Assert.Contains("Pendências da equipe", pendingTasksHtml, StringComparison.Ordinal);
+            Assert.Contains("data-async-filter", pendingTasksHtml, StringComparison.Ordinal);
+
+            Guid areaId;
+            await using (AsyncServiceScope scope = factory.Services.CreateAsyncScope())
+            {
+                CentraSaDbContext dbContext = scope.ServiceProvider.GetRequiredService<CentraSaDbContext>();
+                areaId = await dbContext.TeamAreas.Select(area => area.Id).FirstAsync();
+            }
+
+            string pendingTaskToken = ExtractAntiforgeryToken(pendingTasksHtml);
+            HttpResponseMessage quickCreateResult = await client.PostAsync(
+                new Uri("/pendencias/criacao-rapida", UriKind.Relative),
+                new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    ["Title"] = "Pendência criada pelo fluxo web",
+                    ["ResponsibleAreaId"] = areaId.ToString(),
+                    ["__RequestVerificationToken"] = pendingTaskToken,
+                }));
+            Assert.Equal(HttpStatusCode.Redirect, quickCreateResult.StatusCode);
+            Assert.Equal("/pendencias", GetLocationPath(quickCreateResult.Headers.Location));
+
+            await using (AsyncServiceScope verificationScope = factory.Services.CreateAsyncScope())
+            {
+                CentraSaDbContext verificationContext = verificationScope.ServiceProvider.GetRequiredService<CentraSaDbContext>();
+                Assert.True(await verificationContext.PendingTasks.AnyAsync(task => task.Title == "Pendência criada pelo fluxo web"));
+            }
+
+            string updatedPendingTasksHtml = await client.GetStringAsync(new Uri("/pendencias", UriKind.Relative));
+            Assert.Contains("Pendência criada pelo fluxo web", WebUtility.HtmlDecode(updatedPendingTasksHtml), StringComparison.Ordinal);
+
+            using var partialRequest = new HttpRequestMessage(HttpMethod.Get, "/pendencias?Search=fluxo+web");
+            partialRequest.Headers.Add("X-Requested-With", "fetch");
+            HttpResponseMessage partialResponse = await client.SendAsync(partialRequest);
+            string partialHtml = await partialResponse.Content.ReadAsStringAsync();
+            Assert.Equal(HttpStatusCode.OK, partialResponse.StatusCode);
+            Assert.Contains("Pendência criada pelo fluxo web", WebUtility.HtmlDecode(partialHtml), StringComparison.Ordinal);
+            Assert.DoesNotContain("<html", partialHtml, StringComparison.OrdinalIgnoreCase);
         }
         finally
         {

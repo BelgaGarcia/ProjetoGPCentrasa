@@ -4,8 +4,8 @@ Aplicação web local para organizar pendências, SMUDs, chamados e reuniões
 diárias em uma única interface. O projeto também serve como estudo e portfólio
 de ASP.NET Core MVC.
 
-> Estado atual: Marco 3 concluído. Persistência, autenticação e o design system
-> responsivo estão prontos; o cadastro de pendências começa no Marco 4.
+> Estado atual: Marco 4 concluído. O módulo de pendências já possui cadastro,
+> acompanhamento, histórico, arquivamento e apresentação; SMUDs entram no Marco 5.
 
 ## Tecnologias
 
@@ -58,6 +58,20 @@ senha padrão.
 
 Em Development, um banco vazio recebe dados demonstrativos sanitizados. As
 migrations e os cadastros estruturais são aplicados automaticamente no início.
+
+## Gerenciar pendências
+
+Após entrar, abra **Pendências** no menu lateral. O módulo permite:
+
+- captura rápida e formulário completo;
+- busca, filtros por área, status e prazo, com paginação de 50 itens;
+- conclusão, reabertura, ordenação e arquivamento sem exclusão física;
+- vínculos opcionais com SMUD ou chamado;
+- detalhe com histórico das alterações relevantes;
+- apresentação em tela cheia inspirada no checklist do Gamma.
+
+Filtros funcionam por URL mesmo sem JavaScript. Quando o navegador permite,
+a lista é atualizada sem recarregar toda a página.
 
 ## Estrutura
 

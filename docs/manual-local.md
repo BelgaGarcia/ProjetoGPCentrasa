@@ -28,6 +28,21 @@ No primeiro acesso:
 A configuração inicial deixa de estar disponível após a criação do usuário.
 Não existe cadastro público nem senha padrão.
 
+## Fluxo de pendências
+
+1. Entre na aplicação e selecione **Pendências** no menu lateral.
+2. Use **Captura rápida** para registrar apenas título, área e prazo.
+3. Use **Nova pendência** para informar prioridade, responsável, status,
+   descrição, observações e um vínculo opcional com SMUD ou chamado.
+4. Marque a caixa azul para concluir; a caixa verde reabre o item.
+5. Use as setas para mudar a ordem da reunião e **Apresentar** para abrir o
+   checklist azul em tela cheia.
+6. Itens arquivados deixam a operação principal, mas podem ser restaurados em
+   **Arquivadas**.
+
+Todas as ações mutáveis exigem autenticação e antiforgery. Se o item tiver sido
+alterado em outra aba, recarregue a página antes de tentar salvar novamente.
+
 ## Dados locais
 
 Por padrão:

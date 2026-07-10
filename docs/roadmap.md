@@ -4,7 +4,7 @@
 - [x] Marco 1 — solução, repositório e estrutura base
 - [x] Marco 2 — banco, migrations, Identity e seed
 - [x] Marco 3 — layout, design system e navegação
-- [ ] Marco 4 — pendências
+- [x] Marco 4 — pendências
 - [ ] Marco 5 — SMUDs
 - [ ] Marco 6 — chamados
 - [ ] Marco 7 — reunião diária e apresentação

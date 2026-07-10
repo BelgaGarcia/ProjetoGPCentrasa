@@ -1,0 +1,14 @@
+@model CentraSA.Web.ViewModels.PendingTasks.PendingTaskFormViewModel
+@{
+    ViewData["Title"] = "Editar pendência";
+}
+
+<partial name="_PageHeader" model="@(new PageHeaderViewModel("Editar pendência", "Atualize o acompanhamento sem perder o histórico das alterações.", "Pendências"))" />
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="surface-card task-form-card">
+    <partial name="_Form" model="Model" />
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

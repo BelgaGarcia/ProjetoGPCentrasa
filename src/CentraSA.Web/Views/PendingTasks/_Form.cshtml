@@ -1,0 +1,110 @@
+@using CentraSA.Domain.Enums
+@model CentraSA.Web.ViewModels.PendingTasks.PendingTaskFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input asp-for="Id" type="hidden" />
+<input asp-for="Version" type="hidden" />
+
+<div class="form-grid form-grid--wide">
+    <div class="field-group form-grid__full">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" autofocus />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="field-group form-grid__full">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="field-group">
+        <label asp-for="ResponsibleAreaId" class="form-label"></label>
+        <select asp-for="ResponsibleAreaId" class="form-select">
+            <option value="">Selecione</option>
+            @foreach (var area in Model.Options.Areas)
+            {
+                <option value="@area.Id">@area.Name</option>
+            }
+        </select>
+        <span asp-validation-for="ResponsibleAreaId" class="text-danger"></span>
+    </div>
+    <div class="field-group">
+        <label asp-for="ResponsiblePersonId" class="form-label"></label>
+        <select asp-for="ResponsiblePersonId" class="form-select">
+            <option value="">Não definida</option>
+            @foreach (var person in Model.Options.People)
+            {
+                <option value="@person.Id">@person.Name@(string.IsNullOrWhiteSpace(person.Group) ? string.Empty : $" · {person.Group}")</option>
+            }
+        </select>
+    </div>
+    <div class="field-group">
+        <label asp-for="StatusId" class="form-label"></label>
+        <select asp-for="StatusId" class="form-select">
+            <option value="">Selecione</option>
+            @foreach (var status in Model.Options.Statuses)
+            {
+                <option value="@status.Id">@status.Name</option>
+            }
+        </select>
+        <span asp-validation-for="StatusId" class="text-danger"></span>
+    </div>
+    <div class="field-group">
+        <label asp-for="CategoryId" class="form-label"></label>
+        <select asp-for="CategoryId" class="form-select">
+            <option value="">Sem categoria</option>
+            @foreach (var category in Model.Options.Categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </select>
+    </div>
+    <div class="field-group">
+        <label asp-for="Priority" class="form-label"></label>
+        <select asp-for="Priority" class="form-select">
+            <option value="Low">Baixa</option>
+            <option value="Medium">Média</option>
+            <option value="High">Alta</option>
+            <option value="Critical">Crítica</option>
+        </select>
+    </div>
+    <div class="field-group">
+        <label asp-for="DueDate" class="form-label"></label>
+        <input asp-for="DueDate" type="date" class="form-control" />
+    </div>
+    <div class="field-group form-grid__full">
+        <label asp-for="Origin" class="form-label"></label>
+        <input asp-for="Origin" class="form-control" placeholder="Ex.: reunião diária, Fiscal, PCP" />
+        <span asp-validation-for="Origin" class="text-danger"></span>
+    </div>
+    <div class="field-group">
+        <label asp-for="RelatedSmudId" class="form-label"></label>
+        <select asp-for="RelatedSmudId" class="form-select">
+            <option value="">Nenhum</option>
+            @foreach (var smud in Model.Options.Smuds)
+            {
+                <option value="@smud.Id">@smud.Name</option>
+            }
+        </select>
+        <span class="form-text">Use somente um dos dois vínculos.</span>
+    </div>
+    <div class="field-group">
+        <label asp-for="RelatedSupportTicketId" class="form-label"></label>
+        <select asp-for="RelatedSupportTicketId" class="form-select">
+            <option value="">Nenhum</option>
+            @foreach (var ticket in Model.Options.SupportTickets)
+            {
+                <option value="@ticket.Id">@ticket.Name</option>
+            }
+        </select>
+    </div>
+    <div class="field-group form-grid__full">
+        <label asp-for="Notes" class="form-label"></label>
+        <textarea asp-for="Notes" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="form-actions">
+    <button class="button button--primary" type="submit">Salvar pendência</button>
+    <a class="button button--ghost" asp-action="Index">Cancelar</a>
+</div>

@@ -47,10 +47,12 @@
 
                     <div class="app-navigation__group">
                         <span class="app-navigation__label">Operação</span>
-                        <span class="app-navigation__link is-disabled" aria-disabled="true">
+                        <a class="app-navigation__link @(currentController == "PendingTasks" ? "is-active" : string.Empty)"
+                           asp-controller="PendingTasks" asp-action="Index"
+                           aria-current="@(currentController == "PendingTasks" ? "page" : null)">
                             <svg class="icon" aria-hidden="true"><use href="#icon-check-square"></use></svg>
-                            <span>Pendências</span><small>Em breve</small>
-                        </span>
+                            <span>Pendências</span>
+                        </a>
                         <span class="app-navigation__link is-disabled" aria-disabled="true">
                             <svg class="icon" aria-hidden="true"><use href="#icon-layers"></use></svg>
                             <span>SMUDs</span><small>Em breve</small>

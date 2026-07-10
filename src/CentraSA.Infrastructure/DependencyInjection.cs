@@ -1,6 +1,8 @@
 using CentraSA.Application.Abstractions;
+using CentraSA.Application.PendingTasks;
 using CentraSA.Infrastructure.Identity;
 using CentraSA.Infrastructure.Persistence;
+using CentraSA.Infrastructure.Repositories;
 using CentraSA.Infrastructure.Seeding;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -29,6 +31,7 @@ public static class DependencyInjection
                 sqlite => sqlite.MigrationsAssembly(typeof(CentraSaDbContext).Assembly.FullName)));
 
         services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
+        services.AddScoped<IPendingTaskRepository, PendingTaskRepository>();
 
         services.AddIdentityCore<ApplicationUser>(options =>
             {

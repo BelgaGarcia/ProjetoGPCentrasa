@@ -1,0 +1,23 @@
+@model CentraSA.Web.ViewModels.PendingTasks.PendingTaskIndexViewModel
+@{
+    ViewData["Title"] = "Pendências arquivadas";
+}
+
+<partial name="_PageHeader" model="@(new PageHeaderViewModel("Pendências arquivadas", "Consulte itens retirados da operação e restaure-os quando necessário.", "Arquivo", "Voltar às pendências", Url.Action("Index"), "arrow-right"))" />
+
+<form method="get" class="surface-card task-filters task-filters--compact" data-async-filter data-target="#pending-task-results">
+    <div class="task-filters__search">
+        <label for="task-search">Buscar no arquivo</label>
+        <input id="task-search" asp-for="Search" class="form-control" placeholder="Título, descrição ou origem" data-filter-search />
+    </div>
+    <div>
+        <label asp-for="AreaId">Área</label>
+        <select asp-for="AreaId" class="form-select"><option value="">Todas</option>@foreach (var area in Model.Data.Options.Areas) { <option value="@area.Id">@area.Name</option> }</select>
+    </div>
+    <button type="submit" class="button button--secondary">Filtrar</button>
+    <a asp-action="Archived" class="button button--ghost">Limpar</a>
+</form>
+
+<div id="pending-task-results" aria-live="polite">
+    <partial name="_TaskList" model="Model" />
+</div>

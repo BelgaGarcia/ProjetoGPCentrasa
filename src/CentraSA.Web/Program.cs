@@ -1,4 +1,5 @@
 using CentraSA.Application.Abstractions;
+using CentraSA.Application.PendingTasks;
 using CentraSA.Infrastructure;
 using CentraSA.Infrastructure.Persistence;
 using CentraSA.Web;
@@ -21,6 +22,7 @@ builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(storagePaths.DataProtectionKeysDirectory)
     .SetApplicationName("CentraSA");
 builder.Services.AddInfrastructure(storagePaths);
+builder.Services.AddScoped<IPendingTaskService, PendingTaskService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>

@@ -1,0 +1,142 @@
+@using CentraSA.Application.PendingTasks
+@using CentraSA.Domain.Enums
+@model CentraSA.Web.ViewModels.PendingTasks.PendingTaskIndexViewModel
+@{
+    static string PriorityLabel(PriorityLevel priority) => priority switch
+    {
+        PriorityLevel.Low => "Baixa",
+        PriorityLevel.Medium => "Média",
+        PriorityLevel.High => "Alta",
+        PriorityLevel.Critical => "Crítica",
+        _ => priority.ToString(),
+    };
+}
+
+<div class="task-results-heading">
+    <p><strong>@Model.Data.TotalCount</strong> @(Model.Data.TotalCount == 1 ? "pendência encontrada" : "pendências encontradas")</p>
+</div>
+
+@if (Model.Data.Items.Count == 0)
+{
+    <div class="empty-state">
+        <span class="empty-state__icon" aria-hidden="true">
+            <svg class="icon"><use href="#icon-inbox"></use></svg>
+        </span>
+        <h2>@(Model.Data.ArchivedOnly ? "Nenhuma pendência arquivada" : "Nenhuma pendência encontrada")</h2>
+        <p>@(Model.Data.ArchivedOnly ? "Os itens arquivados aparecerão aqui e poderão ser restaurados." : "Ajuste os filtros ou adicione a primeira pendência da equipe.")</p>
+        @if (!Model.Data.ArchivedOnly)
+        {
+            <a class="button button--primary" asp-action="Create">Criar pendência</a>
+        }
+    </div>
+}
+else
+{
+    <ol class="task-list">
+        @for (var index = 0; index < Model.Data.Items.Count; index++)
+        {
+            var item = Model.Data.Items[index];
+            bool isCompleted = item.CompletedAtUtc.HasValue;
+            <li class="task-card surface-card @(isCompleted ? "is-completed" : string.Empty) @(item.IsOverdue ? "is-overdue" : string.Empty)">
+                <div class="task-card__check">
+                    @if (Model.Data.ArchivedOnly)
+                    {
+                        <span class="task-check task-check--static" aria-hidden="true"></span>
+                    }
+                    else if (isCompleted)
+                    {
+                        <form asp-action="Reopen" asp-route-id="@item.Id" method="post">
+                            <input type="hidden" name="version" value="@item.Version" />
+                            <button class="task-check is-checked" type="submit" title="Reabrir pendência" aria-label="Reabrir @item.Title">
+                                <span aria-hidden="true">✓</span>
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Complete" asp-route-id="@item.Id" method="post">
+                            <input type="hidden" name="version" value="@item.Version" />
+                            <button class="task-check" type="submit" title="Concluir pendência" aria-label="Concluir @item.Title"></button>
+                        </form>
+                    }
+                </div>
+                <div class="task-card__body">
+                    <div class="task-card__title-row">
+                        <div>
+                            <a class="task-card__title" asp-action="Details" asp-route-id="@item.Id">@item.Title</a>
+                            @if (!string.IsNullOrWhiteSpace(item.Description))
+                            {
+                                <p>@item.Description</p>
+                            }
+                        </div>
+                        <span class="status-badge" data-status-color="@item.StatusColor">@item.Status</span>
+                    </div>
+                    <div class="task-card__meta">
+                        <span>@item.Area</span>
+                        @if (!string.IsNullOrWhiteSpace(item.Person))
+                        {
+                            <span>@item.Person</span>
+                        }
+                        <span>Prioridade @PriorityLabel(item.Priority)</span>
+                        @if (!string.IsNullOrWhiteSpace(item.RelatedItem))
+                        {
+                            <span class="task-card__reference">@item.RelatedItem</span>
+                        }
+                        @if (item.DueDate.HasValue)
+                        {
+                            <span class="due-indicator @(item.IsOverdue ? "is-overdue" : item.IsDueSoon ? "is-soon" : string.Empty)">
+                                @(item.IsOverdue ? "Atrasada · " : item.IsDueSoon ? "Vence em breve · " : "Prazo · ")@item.DueDate.Value.ToString("dd/MM/yyyy")
+                            </span>
+                        }
+                        else
+                        {
+                            <span>Sem prazo</span>
+                        }
+                    </div>
+                </div>
+                <div class="task-card__actions">
+                    @if (Model.Data.ArchivedOnly)
+                    {
+                        <form asp-action="Restore" asp-route-id="@item.Id" method="post">
+                            <input type="hidden" name="version" value="@item.Version" />
+                            <button class="button button--secondary button--compact" type="submit">Restaurar</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="task-order-actions" aria-label="Alterar ordem de @item.Title">
+                            <form asp-action="Move" asp-route-id="@item.Id" method="post">
+                                <input type="hidden" name="version" value="@item.Version" />
+                                <input type="hidden" name="direction" value="Up" />
+                                <button class="task-icon-action" type="submit" title="Mover para cima" aria-label="Mover @item.Title para cima" @(index == 0 && Model.Data.Page == 1 ? "disabled" : null)>↑</button>
+                            </form>
+                            <form asp-action="Move" asp-route-id="@item.Id" method="post">
+                                <input type="hidden" name="version" value="@item.Version" />
+                                <input type="hidden" name="direction" value="Down" />
+                                <button class="task-icon-action" type="submit" title="Mover para baixo" aria-label="Mover @item.Title para baixo" @(index == Model.Data.Items.Count - 1 && Model.Data.Page == Model.Data.TotalPages ? "disabled" : null)>↓</button>
+                            </form>
+                        </div>
+                        <a class="button button--ghost button--compact" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                        <form asp-action="Archive" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Arquivar esta pendência?');">
+                            <input type="hidden" name="version" value="@item.Version" />
+                            <button class="button button--ghost button--compact" type="submit">Arquivar</button>
+                        </form>
+                    }
+                </div>
+            </li>
+        }
+    </ol>
+
+    @if (Model.Data.TotalPages > 1)
+    {
+        <nav class="pagination-bar" aria-label="Paginação">
+            <a class="button button--ghost button--compact @(Model.Data.Page <= 1 ? "is-disabled" : string.Empty)"
+               asp-route-page="@(Model.Data.Page - 1)" asp-route-search="@Model.Search" asp-route-areaId="@Model.AreaId"
+               asp-route-personId="@Model.PersonId" asp-route-statusId="@Model.StatusId" asp-route-dueFilter="@Model.DueFilter" asp-route-hideCompleted="@Model.HideCompleted">Anterior</a>
+            <span>Página @Model.Data.Page de @Model.Data.TotalPages</span>
+            <a class="button button--ghost button--compact @(Model.Data.Page >= Model.Data.TotalPages ? "is-disabled" : string.Empty)"
+               asp-route-page="@(Model.Data.Page + 1)" asp-route-search="@Model.Search" asp-route-areaId="@Model.AreaId"
+               asp-route-personId="@Model.PersonId" asp-route-statusId="@Model.StatusId" asp-route-dueFilter="@Model.DueFilter" asp-route-hideCompleted="@Model.HideCompleted">Próxima</a>
+        </nav>
+    }
+}

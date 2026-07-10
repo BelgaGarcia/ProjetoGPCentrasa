@@ -1,0 +1,53 @@
+@model CentraSA.Application.PendingTasks.PendingTaskListData
+@{
+    Layout = "_PresentationLayout";
+    ViewData["Title"] = "Pendências da equipe";
+    bool showCompleted = ViewData["ShowCompleted"] is true;
+}
+
+<section class="gamma-presentation">
+    <header class="gamma-presentation__header">
+        <div>
+            <span class="eyebrow">Central CentraSA</span>
+            <h1>Pendências da equipe CentraSA <span aria-hidden="true">🛰️ ⚙️ 🔧</span></h1>
+        </div>
+        <form method="get" data-no-print>
+            <label class="presentation-toggle">
+                <input type="checkbox" name="showCompleted" value="true" checked="@showCompleted" onchange="this.form.submit()" />
+                Mostrar concluídas
+            </label>
+        </form>
+    </header>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="presentation-empty"><p>Nenhuma pendência ativa para apresentar.</p></div>
+    }
+    else
+    {
+        <ol class="gamma-checklist">
+            @foreach (var item in Model.Items)
+            {
+                bool completed = item.CompletedAtUtc.HasValue;
+                <li class="@(completed ? "is-completed" : string.Empty)">
+                    @if (!completed)
+                    {
+                        <form asp-action="Complete" asp-route-id="@item.Id" method="post" data-no-print>
+                            <input type="hidden" name="version" value="@item.Version" />
+                            <input type="hidden" name="presentation" value="true" />
+                            <button class="gamma-checkbox" type="submit" aria-label="Concluir @item.Title"></button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="gamma-checkbox is-checked" aria-hidden="true">✓</span>
+                    }
+                    <div>
+                        <strong>@item.Title</strong>
+                        <span>@item.Area@(item.DueDate.HasValue ? $" · {item.DueDate.Value:dd/MM/yyyy}" : string.Empty)</span>
+                    </div>
+                </li>
+            }
+        </ol>
+    }
+</section>
