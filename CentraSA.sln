@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FC4D8001-2A00-465C-9ACF-71659C65A765}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CentraSA.Domain", "src\CentraSA.Domain\CentraSA.Domain.csproj", "{A8BA1790-CF87-4AF6-A980-4866C11BBE76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CentraSA.Application", "src\CentraSA.Application\CentraSA.Application.csproj", "{75E2B5D8-5C01-4775-9159-DE4649151F04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CentraSA.Infrastructure", "src\CentraSA.Infrastructure\CentraSA.Infrastructure.csproj", "{E2274EB3-9266-4C8A-9B8D-F68CAFDD70E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CentraSA.Web", "src\CentraSA.Web\CentraSA.Web.csproj", "{35EB92C7-9F9E-44EA-A802-FFA2DD5A6761}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{20663395-482A-472D-A9EA-358C3D3D0499}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CentraSA.UnitTests", "tests\CentraSA.UnitTests\CentraSA.UnitTests.csproj", "{D74C67AD-0DA5-4B88-9F8F-97366F1133D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CentraSA.IntegrationTests", "tests\CentraSA.IntegrationTests\CentraSA.IntegrationTests.csproj", "{30F0FF0B-5D3C-457C-A7EC-34161B3A0805}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8BA1790-CF87-4AF6-A980-4866C11BBE76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8BA1790-CF87-4AF6-A980-4866C11BBE76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8BA1790-CF87-4AF6-A980-4866C11BBE76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8BA1790-CF87-4AF6-A980-4866C11BBE76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75E2B5D8-5C01-4775-9159-DE4649151F04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75E2B5D8-5C01-4775-9159-DE4649151F04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75E2B5D8-5C01-4775-9159-DE4649151F04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75E2B5D8-5C01-4775-9159-DE4649151F04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2274EB3-9266-4C8A-9B8D-F68CAFDD70E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2274EB3-9266-4C8A-9B8D-F68CAFDD70E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2274EB3-9266-4C8A-9B8D-F68CAFDD70E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2274EB3-9266-4C8A-9B8D-F68CAFDD70E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35EB92C7-9F9E-44EA-A802-FFA2DD5A6761}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35EB92C7-9F9E-44EA-A802-FFA2DD5A6761}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35EB92C7-9F9E-44EA-A802-FFA2DD5A6761}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35EB92C7-9F9E-44EA-A802-FFA2DD5A6761}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D74C67AD-0DA5-4B88-9F8F-97366F1133D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D74C67AD-0DA5-4B88-9F8F-97366F1133D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D74C67AD-0DA5-4B88-9F8F-97366F1133D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D74C67AD-0DA5-4B88-9F8F-97366F1133D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30F0FF0B-5D3C-457C-A7EC-34161B3A0805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30F0FF0B-5D3C-457C-A7EC-34161B3A0805}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30F0FF0B-5D3C-457C-A7EC-34161B3A0805}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30F0FF0B-5D3C-457C-A7EC-34161B3A0805}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A8BA1790-CF87-4AF6-A980-4866C11BBE76} = {FC4D8001-2A00-465C-9ACF-71659C65A765}
+		{75E2B5D8-5C01-4775-9159-DE4649151F04} = {FC4D8001-2A00-465C-9ACF-71659C65A765}
+		{E2274EB3-9266-4C8A-9B8D-F68CAFDD70E2} = {FC4D8001-2A00-465C-9ACF-71659C65A765}
+		{35EB92C7-9F9E-44EA-A802-FFA2DD5A6761} = {FC4D8001-2A00-465C-9ACF-71659C65A765}
+		{D74C67AD-0DA5-4B88-9F8F-97366F1133D4} = {20663395-482A-472D-A9EA-358C3D3D0499}
+		{30F0FF0B-5D3C-457C-A7EC-34161B3A0805} = {20663395-482A-472D-A9EA-358C3D3D0499}
+	EndGlobalSection
+EndGlobal
