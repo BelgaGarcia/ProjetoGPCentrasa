@@ -3,7 +3,7 @@
 - [x] Marco 0 — descoberta e decisões
 - [x] Marco 1 — solução, repositório e estrutura base
 - [x] Marco 2 — banco, migrations, Identity e seed
-- [ ] Marco 3 — layout, design system e navegação
+- [x] Marco 3 — layout, design system e navegação
 - [ ] Marco 4 — pendências
 - [ ] Marco 5 — SMUDs
 - [ ] Marco 6 — chamados

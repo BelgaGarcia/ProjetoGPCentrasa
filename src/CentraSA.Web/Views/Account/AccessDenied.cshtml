@@ -2,6 +2,12 @@
     ViewData["Title"] = "Acesso negado";
 }
 
-<h1>Acesso negado</h1>
-<p>Você não possui permissão para acessar esta página.</p>
-<a asp-controller="Home" asp-action="Index" class="btn btn-primary">Voltar ao início</a>
+<section class="error-state">
+    <div class="error-state__content">
+        <span class="error-state__icon" aria-hidden="true"><svg class="icon"><use href="#icon-alert"></use></svg></span>
+        <span class="eyebrow">Acesso restrito</span>
+        <h1>Você não pode abrir esta página.</h1>
+        <p>Volte à área inicial ou entre novamente com o administrador local.</p>
+        <a asp-controller="Home" asp-action="Index" class="button button--primary">Voltar ao início</a>
+    </div>
+</section>

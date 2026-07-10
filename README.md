@@ -4,8 +4,8 @@ Aplicação web local para organizar pendências, SMUDs, chamados e reuniões
 diárias em uma única interface. O projeto também serve como estudo e portfólio
 de ASP.NET Core MVC.
 
-> Estado atual: Marco 2 concluído. Persistência SQLite, migrations, dados de
-> demonstração sanitizados e autenticação local estão disponíveis.
+> Estado atual: Marco 3 concluído. Persistência, autenticação e o design system
+> responsivo estão prontos; o cadastro de pendências começa no Marco 4.
 
 ## Tecnologias
 
@@ -15,6 +15,16 @@ de ASP.NET Core MVC.
 - ASP.NET Core Identity com autenticação local
 - xUnit
 - Bootstrap local e CSS próprio
+
+## Interface
+
+A interface possui dois contextos visuais:
+
+- **Gestão:** sidebar, topbar, navegação responsiva e componentes operacionais.
+- **Apresentação:** layout limpo, tela cheia e impressão/PDF pelo navegador.
+
+Os estilos ficam separados em tokens, base, layout, componentes, páginas e
+impressão. Ícones SVG e bibliotecas são servidos localmente, sem CDN.
 
 ## Pré-requisitos
 

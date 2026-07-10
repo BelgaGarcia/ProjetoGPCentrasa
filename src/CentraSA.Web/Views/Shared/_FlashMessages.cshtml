@@ -1,0 +1,21 @@
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="app-alert app-alert--success" role="status">
+        <span class="app-alert__indicator" aria-hidden="true"></span>
+        <div>
+            <strong>Operação concluída</strong>
+            <p>@successMessage</p>
+        </div>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div class="app-alert app-alert--danger" role="alert">
+        <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
+        <div>
+            <strong>Não foi possível concluir</strong>
+            <p>@errorMessage</p>
+        </div>
+    </div>
+}

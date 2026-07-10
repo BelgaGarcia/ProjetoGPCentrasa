@@ -1,0 +1,22 @@
+@model PageHeaderViewModel
+
+<header class="page-header">
+    <div class="page-header__copy">
+        @if (!string.IsNullOrWhiteSpace(Model.Eyebrow))
+        {
+            <span class="eyebrow">@Model.Eyebrow</span>
+        }
+        <h1>@Model.Title</h1>
+        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <p>@Model.Description</p>
+        }
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.ActionLabel) && !string.IsNullOrWhiteSpace(Model.ActionUrl))
+    {
+        <a class="button button--primary" href="@Model.ActionUrl">
+            <svg class="icon" aria-hidden="true"><use href="#icon-@Model.ActionIcon"></use></svg>
+            @Model.ActionLabel
+        </a>
+    }
+</header>

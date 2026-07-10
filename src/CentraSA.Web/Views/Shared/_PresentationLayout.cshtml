@@ -1,0 +1,37 @@
+@{
+    string pageTitle = ViewData["Title"]?.ToString() ?? "Apresentação";
+}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>@pageTitle - Central CentraSA</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/base.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/print.css" asp-append-version="true" />
+</head>
+<body class="presentation-body">
+    <partial name="_IconSprite" />
+    <a class="skip-link" href="#presentation-content">Pular para a apresentação</a>
+    <header class="presentation-toolbar" data-no-print>
+        <a class="button button--ghost button--compact" asp-controller="Home" asp-action="Index">Voltar à gestão</a>
+        <strong>@pageTitle</strong>
+        <div class="presentation-toolbar__actions">
+            <button type="button" class="button button--secondary button--compact" onclick="window.print()">Imprimir / PDF</button>
+            <button type="button" class="button button--primary button--compact" data-fullscreen>
+                <svg class="icon" aria-hidden="true"><use href="#icon-expand"></use></svg>
+                <span data-fullscreen-label>Tela cheia</span>
+            </button>
+        </div>
+    </header>
+    <main id="presentation-content" class="presentation-content" tabindex="-1">@RenderBody()</main>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

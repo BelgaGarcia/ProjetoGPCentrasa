@@ -1,6 +1,15 @@
-﻿@{
+@{
     ViewData["Title"] = "Sobre";
+    var header = new PageHeaderViewModel(
+        "Sobre a Central",
+        "Informações sobre armazenamento, segurança e escopo da aplicação local.",
+        "Projeto");
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>A Central CentraSA é uma aplicação local de estudo e portfólio. Os dados são armazenados na própria máquina.</p>
+<partial name="_PageHeader" model="header" />
+
+<section class="surface-card form-card">
+    <h2>Dados sob seu controle</h2>
+    <p>A Central CentraSA funciona localmente e mantém o banco SQLite no perfil do usuário do Windows. Nenhuma informação é enviada para serviços externos.</p>
+    <p>Senhas são tratadas pelo ASP.NET Core Identity e não são armazenadas em texto puro. Bancos, backups e credenciais permanecem fora do Git.</p>
+</section>

@@ -1,0 +1,13 @@
+@model EmptyStateViewModel
+
+<div class="empty-state">
+    <span class="empty-state__icon" aria-hidden="true">
+        <svg class="icon"><use href="#icon-@Model.Icon"></use></svg>
+    </span>
+    <h2>@Model.Title</h2>
+    <p>@Model.Description</p>
+    @if (!string.IsNullOrWhiteSpace(Model.ActionLabel) && !string.IsNullOrWhiteSpace(Model.ActionUrl))
+    {
+        <a class="button button--secondary" href="@Model.ActionUrl">@Model.ActionLabel</a>
+    }
+</div>

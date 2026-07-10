@@ -47,8 +47,21 @@ referenciam Web e Infrastructure para validar a composição completa.
 - Toda rota exige autenticação por fallback policy, salvo ações explicitamente
   anônimas de login, configuração inicial e erro.
 
+## Interface
+
+- `_Layout.cshtml` escolhe automaticamente entre o shell autenticado e a
+  experiência de primeiro acesso/login.
+- `_PresentationLayout.cshtml` remove a navegação administrativa e oferece tela
+  cheia e impressão sem dependência de gerador de PDF.
+- O design system usa arquivos separados para tokens, base, layout,
+  componentes, páginas e impressão.
+- A navegação móvel é uma melhoria progressiva em JavaScript; as rotas e
+  formulários continuam funcionais sem scripts.
+- Os ícones são um sprite SVG local e não dependem de fontes ou CDN.
+
 ## Decisões registradas
 
 - [ADR 0001 — Monólito modular](decisions/0001-modular-monolith.md)
 - [ADR 0002 — .NET 8](decisions/0002-dotnet-8.md)
 - [ADR 0003 — SQLite e Identity locais](decisions/0003-local-persistence-and-identity.md)
+- [ADR 0004 — Design system local](decisions/0004-local-design-system.md)

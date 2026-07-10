@@ -1,8 +1,72 @@
-﻿@{
+@{
     ViewData["Title"] = "Início";
+    var header = new PageHeaderViewModel(
+        "Central de operações",
+        "A base local está pronta para receber os módulos de acompanhamento da equipe.",
+        "Visão geral");
 }
 
-<div class="text-center">
-    <h1 class="display-4">Central CentraSA</h1>
-    <p>A persistência local e a autenticação estão configuradas. Os módulos operacionais serão adicionados nos próximos marcos.</p>
-</div>
+<partial name="_PageHeader" model="header" />
+
+<section class="home-grid" aria-label="Situação do projeto">
+    <article class="surface-card welcome-card">
+        <div class="welcome-card__content">
+            <div>
+                <span class="eyebrow">Ambiente local protegido</span>
+                <h2>Uma central feita para a rotina da CentraSA.</h2>
+                <p>Persistência, autenticação e identidade visual já trabalham juntas. Os próximos marcos transformam essa base nos quadros operacionais das referências.</p>
+            </div>
+            <div class="milestone-line" aria-label="Recursos disponíveis">
+                <span>SQLite local</span>
+                <span>Acesso seguro</span>
+                <span>Seed sanitizado</span>
+                <span>Layout responsivo</span>
+            </div>
+        </div>
+    </article>
+
+    <aside class="surface-card next-step-card">
+        <span class="next-step-card__number" aria-hidden="true">04</span>
+        <span class="eyebrow">Próximo marco</span>
+        <h2>Gestão de pendências</h2>
+        <p>Checklist, criação rápida, filtros, ordenação e modo de apresentação inspirado no Gamma.</p>
+        <span class="status-badge status-badge--blue">Planejado</span>
+    </aside>
+</section>
+
+<section aria-labelledby="modules-title">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">Estrutura preparada</span>
+            <h2 id="modules-title">Módulos operacionais</h2>
+        </div>
+        <p>As entradas serão liberadas marco a marco.</p>
+    </div>
+
+    <div class="module-grid">
+        <article class="surface-card module-card module-card--yellow">
+            <div class="module-card__top">
+                <span class="module-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-check-square"></use></svg></span>
+                <span class="status-badge status-badge--yellow">Marco 4</span>
+            </div>
+            <h3>Pendências</h3>
+            <p>Checklist da equipe, responsáveis, prazos e apresentação.</p>
+        </article>
+        <article class="surface-card module-card module-card--purple">
+            <div class="module-card__top">
+                <span class="module-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-layers"></use></svg></span>
+                <span class="status-badge status-badge--purple">Marco 5</span>
+            </div>
+            <h3>SMUDs</h3>
+            <p>Quadro por status com ações, responsáveis e vencimentos.</p>
+        </article>
+        <article class="surface-card module-card module-card--red">
+            <div class="module-card__top">
+                <span class="module-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-ticket"></use></svg></span>
+                <span class="status-badge status-badge--red">Marco 6</span>
+            </div>
+            <h3>Chamados</h3>
+            <p>Relação visual entre categoria, equipe responsável e prazo.</p>
+        </article>
+    </div>
+</section>

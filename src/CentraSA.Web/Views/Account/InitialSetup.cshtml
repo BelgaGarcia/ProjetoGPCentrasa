@@ -3,33 +3,36 @@
     ViewData["Title"] = "Configuração inicial";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-7 col-lg-5">
-        <h1 class="h2">Configuração inicial</h1>
-        <p>Crie o único administrador local. Não existe senha padrão.</p>
+<article class="auth-card">
+    <header class="auth-card__header">
+        <span class="eyebrow">Primeiro acesso</span>
+        <h1>Crie o administrador</h1>
+        <p>Essa etapa acontece uma única vez. Não existe usuário ou senha padrão.</p>
+    </header>
 
-        <form method="post" novalidate>
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="mb-3">
-                <label asp-for="UserName" class="form-label"></label>
-                <input asp-for="UserName" class="form-control" autocomplete="username" autofocus />
-                <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" class="form-control" autocomplete="new-password" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-                <div class="form-text">Use ao menos 12 caracteres, incluindo letras minúsculas e números.</div>
-            </div>
-            <div class="mb-3">
-                <label asp-for="ConfirmPassword" class="form-label"></label>
-                <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-primary">Criar administrador</button>
-        </form>
-    </div>
-</div>
+    <form method="post" class="auth-form" novalidate>
+        <div asp-validation-summary="ModelOnly" role="alert"></div>
+        <div class="field-group">
+            <label asp-for="UserName" class="form-label"></label>
+            <input asp-for="UserName" class="form-control" autocomplete="username" autofocus />
+            <span asp-validation-for="UserName"></span>
+        </div>
+        <div class="field-group">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" class="form-control" autocomplete="new-password" aria-describedby="password-help" />
+            <span asp-validation-for="Password"></span>
+            <div class="form-text" id="password-help">Use ao menos 12 caracteres, incluindo letras minúsculas e números.</div>
+        </div>
+        <div class="field-group">
+            <label asp-for="ConfirmPassword" class="form-label"></label>
+            <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+            <span asp-validation-for="ConfirmPassword"></span>
+        </div>
+        <button type="submit" class="button button--primary button--block">Criar administrador</button>
+    </form>
+
+    <p class="auth-card__footer">A configuração inicial só está disponível em acesso local e será desativada após o cadastro.</p>
+</article>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -1,56 +1,146 @@
-﻿<!DOCTYPE html>
+@{
+    string currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+    string currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty;
+    string pageTitle = ViewData["Title"]?.ToString() ?? "Central CentraSA";
+    bool isAuthenticated = User.Identity?.IsAuthenticated == true;
+    string userName = User.Identity?.Name ?? "Administrador";
+    string userInitial = userName.Length > 0 ? userName[..1].ToUpperInvariant() : "A";
+}
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Central CentraSA</title>
+    <meta name="color-scheme" content="dark" />
+    <title>@pageTitle - Central CentraSA</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/CentraSA.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/base.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/print.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Central CentraSA</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Sobre</a>
-                        </li>
-                    </ul>
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        <div class="d-flex align-items-center gap-3">
-                            <a asp-controller="Account" asp-action="ChangePassword">Alterar senha</a>
-                            <form asp-controller="Account" asp-action="Logout" method="post">
-                                <button type="submit" class="btn btn-outline-secondary btn-sm">Sair</button>
-                            </form>
-                        </div>
-                    }
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+<body class="@(isAuthenticated ? "app-body" : "auth-page")">
+    <partial name="_IconSprite" />
+    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Central CentraSA
+    @if (isAuthenticated)
+    {
+        <div class="app-shell" data-app-shell>
+            <aside class="app-sidebar" id="app-sidebar" aria-label="Navegação principal">
+                <div class="brand">
+                    <span class="brand__mark" aria-hidden="true"><i></i><i></i><i></i></span>
+                    <span class="brand__copy"><strong>Central</strong><small>CentraSA</small></span>
+                </div>
+
+                <nav class="app-navigation">
+                    <div class="app-navigation__group">
+                        <span class="app-navigation__label">Visão geral</span>
+                        <a class="app-navigation__link @(currentController == "Home" && currentAction == "Index" ? "is-active" : string.Empty)"
+                           asp-controller="Home" asp-action="Index"
+                           aria-current="@(currentController == "Home" && currentAction == "Index" ? "page" : null)">
+                            <svg class="icon" aria-hidden="true"><use href="#icon-home"></use></svg>
+                            <span>Início</span>
+                        </a>
+                    </div>
+
+                    <div class="app-navigation__group">
+                        <span class="app-navigation__label">Operação</span>
+                        <span class="app-navigation__link is-disabled" aria-disabled="true">
+                            <svg class="icon" aria-hidden="true"><use href="#icon-check-square"></use></svg>
+                            <span>Pendências</span><small>Em breve</small>
+                        </span>
+                        <span class="app-navigation__link is-disabled" aria-disabled="true">
+                            <svg class="icon" aria-hidden="true"><use href="#icon-layers"></use></svg>
+                            <span>SMUDs</span><small>Em breve</small>
+                        </span>
+                        <span class="app-navigation__link is-disabled" aria-disabled="true">
+                            <svg class="icon" aria-hidden="true"><use href="#icon-ticket"></use></svg>
+                            <span>Chamados</span><small>Em breve</small>
+                        </span>
+                    </div>
+
+                    <div class="app-navigation__group">
+                        <span class="app-navigation__label">Acompanhamento</span>
+                        <span class="app-navigation__link is-disabled" aria-disabled="true">
+                            <svg class="icon" aria-hidden="true"><use href="#icon-presentation"></use></svg>
+                            <span>Reunião diária</span>
+                        </span>
+                        <span class="app-navigation__link is-disabled" aria-disabled="true">
+                            <svg class="icon" aria-hidden="true"><use href="#icon-history"></use></svg>
+                            <span>Histórico</span>
+                        </span>
+                    </div>
+                </nav>
+
+                <div class="app-sidebar__footer">
+                    <a class="app-navigation__link @(currentController == "Account" && currentAction == "ChangePassword" ? "is-active" : string.Empty)"
+                       asp-controller="Account" asp-action="ChangePassword">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-settings"></use></svg>
+                        <span>Minha conta</span>
+                    </a>
+                    <div class="local-status"><span aria-hidden="true"></span>Dados salvos localmente</div>
+                </div>
+            </aside>
+
+            <button class="navigation-overlay" type="button" data-navigation-close aria-label="Fechar menu"></button>
+
+            <div class="app-workspace">
+                <header class="app-topbar">
+                    <button class="icon-button navigation-toggle" type="button" data-navigation-toggle
+                            aria-controls="app-sidebar" aria-expanded="false" aria-label="Abrir menu">
+                        <svg class="icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+                    </button>
+                    <div class="app-topbar__title"><span>Área de gestão</span><strong>@pageTitle</strong></div>
+                    <div class="app-topbar__actions">
+                        <div class="user-chip" title="Usuário conectado">
+                            <span class="user-chip__avatar" aria-hidden="true">@userInitial</span>
+                            <span class="user-chip__copy"><small>Administrador</small><strong>@userName</strong></span>
+                        </div>
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="button button--ghost button--compact">Sair</button>
+                        </form>
+                    </div>
+                </header>
+
+                <main class="app-content" id="main-content" tabindex="-1">
+                    <partial name="_FlashMessages" />
+                    @RenderBody()
+                </main>
+            </div>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    }
+    else
+    {
+        <main class="auth-shell" id="main-content" tabindex="-1">
+            <section class="auth-brand-panel" aria-label="Central CentraSA">
+                <div class="auth-brand-panel__content">
+                    <div class="brand brand--large">
+                        <span class="brand__mark" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <span class="brand__copy"><strong>Central</strong><small>CentraSA</small></span>
+                    </div>
+                    <div class="auth-brand-panel__message">
+                        <span class="eyebrow">Operação centralizada</span>
+                        <h1>Pendências e entregas sob controle.</h1>
+                        <p>Uma visão local e segura para acompanhar a rotina da equipe e conduzir a reunião diária.</p>
+                    </div>
+                    <ul class="auth-features" aria-label="Características">
+                        <li><span></span>Dados no seu computador</li>
+                        <li><span></span>Acesso protegido</li>
+                        <li><span></span>Sem serviços externos</li>
+                    </ul>
+                </div>
+            </section>
+            <section class="auth-content">
+                <div class="auth-content__inner">
+                    <partial name="_FlashMessages" />
+                    @RenderBody()
+                </div>
+            </section>
+        </main>
+    }
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

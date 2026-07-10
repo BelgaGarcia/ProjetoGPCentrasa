@@ -32,12 +32,24 @@ public sealed partial class AuthenticationFlowTests
             Assert.Equal(HttpStatusCode.Redirect, protectedPage.StatusCode);
             Assert.Equal("/conta/entrar", GetLocationPath(protectedPage.Headers.Location));
 
+            HttpResponseMessage tokensAsset = await client.GetAsync(new Uri("/css/tokens.css", UriKind.Relative));
+            HttpResponseMessage layoutAsset = await client.GetAsync(new Uri("/css/layout.css", UriKind.Relative));
+            HttpResponseMessage scriptAsset = await client.GetAsync(new Uri("/js/site.js", UriKind.Relative));
+            Assert.Equal(HttpStatusCode.OK, tokensAsset.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, layoutAsset.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, scriptAsset.StatusCode);
+            Assert.Contains("--surface-navy", await tokensAsset.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+
             HttpResponseMessage setupWithoutToken = await client.PostAsync(
                 new Uri("/conta/configuracao-inicial", UriKind.Relative),
                 new FormUrlEncodedContent([]));
             Assert.Equal(HttpStatusCode.BadRequest, setupWithoutToken.StatusCode);
 
-            string setupToken = await GetAntiforgeryTokenAsync(client, "/conta/configuracao-inicial");
+            string setupHtml = await client.GetStringAsync(new Uri("/conta/configuracao-inicial", UriKind.Relative));
+            Assert.Contains("<html lang=\"pt-BR\">", setupHtml, StringComparison.Ordinal);
+            Assert.Contains("class=\"auth-brand-panel\"", setupHtml, StringComparison.Ordinal);
+            Assert.Contains("href=\"#main-content\"", setupHtml, StringComparison.Ordinal);
+            string setupToken = ExtractAntiforgeryToken(setupHtml);
             const string password = "senha-local-2026";
             HttpResponseMessage setupResult = await client.PostAsync(
                 new Uri("/conta/configuracao-inicial", UriKind.Relative),
@@ -69,7 +81,12 @@ public sealed partial class AuthenticationFlowTests
 
             HttpResponseMessage authenticatedPage = await client.GetAsync(new Uri("/", UriKind.Relative));
             Assert.Equal(HttpStatusCode.OK, authenticatedPage.StatusCode);
-            Assert.Contains("Central CentraSA", await authenticatedPage.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+            string authenticatedHtml = await authenticatedPage.Content.ReadAsStringAsync();
+            Assert.Contains("Central CentraSA", authenticatedHtml, StringComparison.Ordinal);
+            Assert.Contains("class=\"app-sidebar\"", authenticatedHtml, StringComparison.Ordinal);
+            Assert.Contains("aria-label=\"Navegação principal\"", authenticatedHtml, StringComparison.Ordinal);
+            Assert.Contains("data-navigation-toggle", authenticatedHtml, StringComparison.Ordinal);
+            Assert.Contains("Módulos operacionais", authenticatedHtml, StringComparison.Ordinal);
         }
         finally
         {
@@ -84,6 +101,11 @@ public sealed partial class AuthenticationFlowTests
     private static async Task<string> GetAntiforgeryTokenAsync(HttpClient client, string path)
     {
         string html = await client.GetStringAsync(new Uri(path, UriKind.Relative));
+        return ExtractAntiforgeryToken(html);
+    }
+
+    private static string ExtractAntiforgeryToken(string html)
+    {
         Match match = AntiforgeryTokenPattern().Match(html);
         Assert.True(match.Success, "O formulário não contém token antiforgery.");
         return WebUtility.HtmlDecode(match.Groups[1].Value);

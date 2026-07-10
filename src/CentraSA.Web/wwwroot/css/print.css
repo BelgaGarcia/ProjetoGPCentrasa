@@ -1,0 +1,57 @@
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  body,
+  .presentation-body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  [data-no-print],
+  .app-sidebar,
+  .app-topbar,
+  .navigation-overlay,
+  .skip-link,
+  .button,
+  form {
+    display: none !important;
+  }
+
+  .app-shell,
+  .app-workspace {
+    display: block;
+  }
+
+  .app-content,
+  .presentation-content {
+    width: 100%;
+    max-width: none;
+    min-height: auto;
+    padding: 0;
+  }
+
+  .surface-card,
+  .module-card,
+  .empty-state {
+    break-inside: avoid;
+    border-color: #777 !important;
+    background: #fff !important;
+    color: #111 !important;
+    box-shadow: none !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  p,
+  .module-card h3 {
+    color: #111 !important;
+  }
+
+  a {
+    color: #111 !important;
+    text-decoration: none;
+  }
+}
