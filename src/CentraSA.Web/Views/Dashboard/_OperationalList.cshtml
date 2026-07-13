@@ -1,0 +1,33 @@
+@using CentraSA.Domain.Enums
+@model CentraSA.Web.ViewModels.Insights.DashboardItemsViewModel
+@{
+    static string SourceController(TrackedEntityType sourceType) => sourceType switch
+    {
+        TrackedEntityType.PendingTask => "PendingTasks",
+        TrackedEntityType.Smud => "Smuds",
+        TrackedEntityType.SupportTicket => "SupportTickets",
+        _ => "Home",
+    };
+}
+
+<section class="surface-card operational-results">
+    <header class="section-heading"><div><span class="eyebrow">Resultado filtrado</span><h2>@Model.Data.Items.Count item(ns)</h2></div></header>
+    @if (Model.Data.Items.Count == 0)
+    {
+        <div class="dashboard-empty"><p>Nenhum item corresponde aos filtros.</p></div>
+    }
+    else
+    {
+        <ol class="operational-list">
+            @foreach (var item in Model.Data.Items)
+            {
+                <li class="@(item.IsOverdue ? "is-overdue" : item.IsDueSoon ? "is-soon" : string.Empty)">
+                    <div class="operational-list__identity"><span class="meeting-source-badge">@item.SourceLabel</span><strong>@item.Reference</strong></div>
+                    <div class="operational-list__content"><h3>@item.Title</h3><p>@item.Status · Atualizado em @item.UpdatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p></div>
+                    <div class="operational-list__due"><span>Prazo</span><strong>@(item.DueDate?.ToString("dd/MM/yyyy") ?? "Sem prazo")</strong></div>
+                    <a class="button button--ghost button--compact" asp-controller="@SourceController(item.SourceType)" asp-action="Details" asp-route-id="@item.SourceId">Abrir</a>
+                </li>
+            }
+        </ol>
+    }
+</section>

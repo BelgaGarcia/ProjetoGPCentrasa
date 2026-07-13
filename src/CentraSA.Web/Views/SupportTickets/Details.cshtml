@@ -1,0 +1,84 @@
+@using CentraSA.Domain.Enums
+@model CentraSA.Application.SupportTickets.SupportTicketDetailsData
+@{
+    ViewData["Title"] = $"Chamado {Model.Item.Number}";
+    string priority = Model.Item.Priority switch
+    {
+        PriorityLevel.Low => "Baixa",
+        PriorityLevel.Medium => "Média",
+        PriorityLevel.High => "Alta",
+        PriorityLevel.Critical => "Crítica",
+        _ => Model.Item.Priority.ToString(),
+    };
+}
+
+<header class="page-header">
+    <div class="page-header__copy">
+        <span class="eyebrow">Chamado @Model.Item.Number</span>
+        <h1>@Model.Item.Title</h1>
+        @if (!string.IsNullOrWhiteSpace(Model.Item.Description))
+        {
+            <p>@Model.Item.Description</p>
+        }
+    </div>
+    <div class="page-actions">
+        <a class="button button--ghost" asp-action="Index">Voltar ao quadro</a>
+        @if (!Model.ArchivedAtUtc.HasValue)
+        {
+            <a class="button button--primary" asp-action="Edit" asp-route-id="@Model.Item.Id">Editar</a>
+        }
+    </div>
+</header>
+
+<div class="details-grid">
+    <section class="surface-card detail-card" aria-labelledby="ticket-detail-title">
+        <h2 id="ticket-detail-title">Composição operacional</h2>
+        <dl class="detail-list">
+            <div><dt>Número</dt><dd>@Model.Item.Number</dd></div>
+            <div><dt>Categoria</dt><dd><span class="status-badge" data-status-color="@Model.Item.CategoryColor">@Model.Item.Category</span></dd></div>
+            <div><dt>Status</dt><dd><span class="status-badge" data-status-color="@Model.Item.StatusColor">@Model.Item.Status</span></dd></div>
+            <div><dt>Equipe</dt><dd>@Model.Item.Area</dd></div>
+            <div><dt>Pessoa</dt><dd>@(Model.Item.Person ?? "Não definida")</dd></div>
+            <div><dt>Prioridade</dt><dd>@priority</dd></div>
+            <div><dt>Abertura</dt><dd>@Model.Item.OpenedOn.ToString("dd/MM/yyyy")</dd></div>
+            <div>
+                <dt>Prazo</dt>
+                <dd class="due-indicator @(Model.Item.IsOverdue ? "is-overdue" : Model.Item.IsDueSoon ? "is-soon" : string.Empty)">
+                    @(Model.Item.DueDate?.ToString("dd/MM/yyyy") ?? "Sem prazo")
+                    @(Model.Item.IsOverdue ? " · atrasado" : Model.Item.IsDueSoon ? " · vence em breve" : string.Empty)
+                </dd>
+            </div>
+            <div><dt>Criado em</dt><dd>@Model.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</dd></div>
+            <div><dt>Atualizado em</dt><dd>@Model.UpdatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</dd></div>
+        </dl>
+        @if (!string.IsNullOrWhiteSpace(Model.Item.PendingAction))
+        {
+            <div class="detail-action"><strong>Ação pendente</strong><p>@Model.Item.PendingAction</p></div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Notes))
+        {
+            <div class="detail-notes"><strong>Observações</strong><p>@Model.Notes</p></div>
+        }
+        @if (Model.ArchivedAtUtc.HasValue)
+        {
+            <div class="app-alert app-alert--danger"><div><strong>Chamado arquivado</strong><p>Restaure-o para voltar a editá-lo.</p></div></div>
+        }
+    </section>
+
+    <section class="surface-card detail-card" aria-labelledby="ticket-history-title">
+        <h2 id="ticket-history-title">Histórico</h2>
+        @if (Model.History.Count == 0)
+        {
+            <p>Nenhum evento registrado.</p>
+        }
+        else
+        {
+            <ol class="history-timeline">
+                @foreach (var history in Model.History)
+                {
+                    <li><span aria-hidden="true"></span><div><strong>@history.Action</strong><p>@history.Summary</p><time>@history.OccurredAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</time></div></li>
+                }
+            </ol>
+        }
+    </section>
+</div>

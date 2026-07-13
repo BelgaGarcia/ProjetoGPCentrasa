@@ -9,11 +9,22 @@
 5. Execute a suíte de validação antes de propor um commit.
 
 ```powershell
-dotnet restore CentraSA.sln
-dotnet build CentraSA.sln --no-restore
-dotnet test CentraSA.sln --no-build
-dotnet format CentraSA.sln --verify-no-changes
+.\V.cmd
+.\V.cmd -Configuration Release
 ```
+
+Para coletar cobertura no mesmo fluxo, execute `.\V.cmd -Coverage`. Cobertura é
+um sinal de apoio: regras e fluxos críticos devem ser revisados mesmo quando o
+percentual global subir.
+
+Mudanças destinadas a publicação também devem passar pela auditoria local:
+
+```powershell
+.\scripts\audit-portfolio.cmd
+```
+
+Não use screenshots, seeds ou fixtures para reproduzir dados reais. O gerador de
+portfólio deve continuar restrito a Development, loopback e token efêmero.
 
 ## Commits
 

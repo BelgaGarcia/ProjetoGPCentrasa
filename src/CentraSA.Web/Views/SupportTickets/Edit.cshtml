@@ -1,0 +1,14 @@
+@model CentraSA.Web.ViewModels.SupportTickets.SupportTicketFormViewModel
+@{
+    ViewData["Title"] = "Editar chamado";
+}
+
+<partial name="_PageHeader" model="@(new PageHeaderViewModel("Editar chamado", "Atualize os nós da relação sem perder o histórico das alterações.", "Chamados"))" />
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="surface-card task-form-card">
+    <partial name="_Form" model="Model" />
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -19,7 +19,7 @@ O esquema físico foi criado no Marco 2 pela migration `InitialCreate`.
 - `ActivityHistory`
 - `WorkItemReference`
 
-Registros operacionais importantes usarão arquivamento lógico. Datas de
+Registros operacionais importantes usam arquivamento lógico. Datas de
 negócio usam `DateOnly`; timestamps usam UTC.
 
 ## Tabelas e integridade

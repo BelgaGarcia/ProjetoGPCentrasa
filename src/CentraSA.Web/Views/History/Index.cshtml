@@ -1,0 +1,75 @@
+@using CentraSA.Domain.Enums
+@model CentraSA.Web.ViewModels.Insights.HistoryIndexViewModel
+@{
+    ViewData["Title"] = "Histórico global";
+    static string EntityLabel(TrackedEntityType value) => value switch
+    {
+        TrackedEntityType.PendingTask => "Pendência",
+        TrackedEntityType.Smud => "SMUD",
+        TrackedEntityType.SupportTicket => "Chamado",
+        TrackedEntityType.DailyMeeting => "Reunião",
+        TrackedEntityType.TeamArea => "Área/equipe",
+        TrackedEntityType.Person => "Pessoa",
+        TrackedEntityType.StatusDefinition => "Status",
+        TrackedEntityType.Category => "Categoria",
+        TrackedEntityType.Backup => "Backup",
+        _ => value.ToString(),
+    };
+    static string ActionLabel(ActivityActionType value) => value switch
+    {
+        ActivityActionType.Created => "Criação",
+        ActivityActionType.Updated => "Atualização",
+        ActivityActionType.StatusChanged => "Mudança de status",
+        ActivityActionType.ResponsibleChanged => "Mudança de responsável",
+        ActivityActionType.DueDateChanged => "Mudança de prazo",
+        ActivityActionType.Completed => "Conclusão",
+        ActivityActionType.Reopened => "Reabertura",
+        ActivityActionType.Archived => "Arquivamento/desativação",
+        ActivityActionType.Restored => "Restauração/ativação",
+        ActivityActionType.BackupRestored => "Restauração de backup",
+        _ => value.ToString(),
+    };
+}
+
+<header class="page-header">
+    <div class="page-header__copy">
+        <span class="eyebrow">Rastreabilidade operacional</span>
+        <h1>Histórico global</h1>
+        <p>Consulte eventos dos módulos, reuniões e cadastros auxiliares.</p>
+    </div>
+</header>
+
+<form asp-action="Index" method="get" class="surface-card history-filters" data-async-filter data-target="#history-results">
+    <div class="field-group history-filters__search">
+        <label asp-for="Search">Pesquisar no resumo</label>
+        <input asp-for="Search" class="form-control" data-filter-search />
+    </div>
+    <div class="field-group">
+        <label asp-for="EntityType">Tipo</label>
+        <select asp-for="EntityType" class="form-select">
+            <option value="">Todos</option>
+            @foreach (TrackedEntityType value in Enum.GetValues<TrackedEntityType>())
+            {
+                <option value="@value">@EntityLabel(value)</option>
+            }
+        </select>
+    </div>
+    <div class="field-group">
+        <label asp-for="ActionType">Ação</label>
+        <select asp-for="ActionType" class="form-select">
+            <option value="">Todas</option>
+            @foreach (ActivityActionType value in Enum.GetValues<ActivityActionType>())
+            {
+                <option value="@value">@ActionLabel(value)</option>
+            }
+        </select>
+    </div>
+    <div class="field-group"><label asp-for="FromDate">De</label><input asp-for="FromDate" type="date" class="form-control" /></div>
+    <div class="field-group"><label asp-for="ToDate">Até</label><input asp-for="ToDate" type="date" class="form-control" /></div>
+    <button class="button button--primary" type="submit">Aplicar filtros</button>
+    <a class="button button--ghost" asp-action="Index">Limpar</a>
+</form>
+
+<div id="history-results" aria-live="polite">
+    <partial name="_Timeline" model="Model" />
+</div>

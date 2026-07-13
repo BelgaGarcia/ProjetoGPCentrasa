@@ -1,0 +1,98 @@
+@using CentraSA.Domain.Enums
+@model CentraSA.Web.ViewModels.DailyMeetings.DailyMeetingBuilderViewModel
+@{
+    static string SectionLabel(MeetingSection section) => section switch
+    {
+        MeetingSection.Overdue => "Atrasados",
+        MeetingSection.DueSoon => "Próximos prazos",
+        MeetingSection.PendingTasks => "Pendências",
+        MeetingSection.Smuds => "SMUDs",
+        MeetingSection.SupportTickets => "Chamados",
+        MeetingSection.RecentlyCompleted => "Concluídos recentemente",
+        _ => section.ToString(),
+    };
+}
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input asp-for="Id" type="hidden" />
+<input asp-for="Version" type="hidden" />
+
+<section class="surface-card meeting-builder-meta" aria-labelledby="meeting-data-title">
+    <div class="section-heading"><div><span class="eyebrow">Identificação</span><h2 id="meeting-data-title">Dados da sessão</h2></div></div>
+    <div class="form-grid form-grid--wide">
+        <div class="field-group">
+            <label asp-for="MeetingDate" class="form-label"></label>
+            <input asp-for="MeetingDate" type="date" class="form-control" />
+            <span asp-validation-for="MeetingDate" class="text-danger"></span>
+        </div>
+        <div class="field-group form-grid__full">
+            <label asp-for="GeneralNotes" class="form-label"></label>
+            <textarea asp-for="GeneralNotes" class="form-control" rows="3" placeholder="Contexto, avisos ou objetivo da reunião"></textarea>
+            <span asp-validation-for="GeneralNotes" class="text-danger"></span>
+        </div>
+    </div>
+</section>
+
+<section class="surface-card meeting-builder-items" aria-labelledby="meeting-items-title">
+    <header class="section-heading">
+        <div><span class="eyebrow">Sugestões operacionais</span><h2 id="meeting-items-title">Seleção e roteiro</h2></div>
+        <span class="summary-count">@Model.Items.Count opções</span>
+    </header>
+    <div class="meeting-section-legend" aria-label="Ordem sugerida das seções">
+        @foreach (MeetingSection meetingSection in Enum.GetValues<MeetingSection>().OrderBy(value => value is MeetingSection.Overdue ? 0 : value is MeetingSection.DueSoon ? 1 : 2))
+        {
+            <span>@SectionLabel(meetingSection)</span>
+        }
+    </div>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="meeting-empty"><h3>Nenhum item disponível</h3><p>Cadastre itens operacionais antes de preparar a reunião.</p></div>
+    }
+    else
+    {
+        <div class="meeting-builder-list">
+            @for (int i = 0; i < Model.Items.Count; i++)
+            {
+                <article class="meeting-builder-item">
+                    <input asp-for="Items[i].ItemId" type="hidden" />
+                    <input asp-for="Items[i].SourceType" type="hidden" />
+                    <input asp-for="Items[i].SourceId" type="hidden" />
+                    <div class="meeting-builder-item__select">
+                        <input asp-for="Items[i].Selected" class="form-check-input" />
+                        <label asp-for="Items[i].Selected">Incluir</label>
+                    </div>
+                    <div class="meeting-builder-item__summary">
+                        <div class="meeting-builder-item__topline">
+                            <span class="meeting-source-badge">@Model.Items[i].SourceLabel</span>
+                            <span class="status-badge" data-status-color="blue">@Model.Items[i].Status</span>
+                            <small>@Model.Items[i].SuggestionReason</small>
+                        </div>
+                        <h3>@Model.Items[i].Title</h3>
+                        <p>@(Model.Items[i].Responsible ?? "Sem responsável") · @(Model.Items[i].DueDate?.ToString("dd/MM/yyyy") ?? "Sem prazo")</p>
+                    </div>
+                    <div class="meeting-builder-item__controls">
+                        <div class="field-group">
+                            <label asp-for="Items[i].Section">Seção</label>
+                            <select asp-for="Items[i].Section" class="form-select">
+                                @foreach (MeetingSection meetingSection in Enum.GetValues<MeetingSection>())
+                                {
+                                    <option value="@meetingSection">@SectionLabel(meetingSection)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="field-group meeting-order-field">
+                            <label asp-for="Items[i].SortOrder">Ordem</label>
+                            <input asp-for="Items[i].SortOrder" class="form-control" type="number" min="0" />
+                        </div>
+                        <div class="field-group meeting-notes-field">
+                            <label asp-for="Items[i].PresentationNotes">Notas para apresentação</label>
+                            <textarea asp-for="Items[i].PresentationNotes" class="form-control" rows="2"></textarea>
+                            <span asp-validation-for="Items[i].PresentationNotes" class="text-danger"></span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</section>

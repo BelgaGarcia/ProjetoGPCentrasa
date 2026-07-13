@@ -1,0 +1,60 @@
+@model CentraSA.Application.SupportTickets.SupportTicketBoardData
+@{
+    Layout = "_PresentationLayout";
+    ViewData["Title"] = "Quadro de chamados";
+    ViewData["BackController"] = "SupportTickets";
+    bool showFinalized = ViewData["ShowFinalized"] is true;
+}
+
+<section class="ticket-presentation">
+    <header class="gamma-presentation__header">
+        <div>
+            <span class="eyebrow">Central CentraSA</span>
+            <h1>Chamado · responsável · prazo</h1>
+            <p><strong>@Model.TotalCount</strong> relações operacionais exibidas.</p>
+        </div>
+        <form method="get" data-no-print>
+            <label class="presentation-toggle">
+                <input type="checkbox" name="showFinalized" value="true" checked="@showFinalized" onchange="this.form.submit()" />
+                Mostrar finalizados
+            </label>
+        </form>
+    </header>
+
+    @if (Model.TotalCount == 0)
+    {
+        <div class="presentation-empty"><p>Nenhum chamado disponível para apresentar.</p></div>
+    }
+    else
+    {
+        <div class="ticket-board ticket-board--presentation">
+            @foreach (var group in Model.Groups.Where(group => group.Total > 0))
+            {
+                <section class="ticket-group surface-card">
+                    <header class="ticket-group__header"><div><span class="smud-column__indicator" data-status-color="@group.ColorToken"></span><h2>@group.Category</h2></div><span class="smud-column__total">@group.Total</span></header>
+                    <ol class="ticket-relations">
+                        @foreach (var item in group.Cards)
+                        {
+                            <li>
+                                <article class="ticket-relation @(item.IsOverdue ? "is-overdue" : string.Empty)">
+                                    <div class="ticket-node ticket-node--card">
+                                        <div class="ticket-node__topline"><strong class="ticket-number">Chamado @item.Number</strong><span class="status-badge" data-status-color="@item.StatusColor">@item.Status</span></div>
+                                        <h3>@item.Title</h3>
+                                        @if (!string.IsNullOrWhiteSpace(item.PendingAction))
+                                        {
+                                            <div class="ticket-action"><strong>Ação pendente</strong><p>@item.PendingAction</p></div>
+                                        }
+                                    </div>
+                                    <span class="ticket-connector" aria-hidden="true"></span>
+                                    <div class="ticket-node ticket-node--responsible"><span class="ticket-node__label">Responsável</span><strong>@item.Area</strong><small>@(item.Person ?? "Pessoa não definida")</small></div>
+                                    <span class="ticket-connector" aria-hidden="true"></span>
+                                    <div class="ticket-node ticket-node--deadline @(item.IsOverdue ? "is-overdue" : item.IsDueSoon ? "is-soon" : string.Empty)"><span class="ticket-node__label">Prazo</span><strong>@(item.DueDate?.ToString("dd/MM/yyyy") ?? "Sem prazo")</strong><small>@(item.IsOverdue ? "Atrasado" : item.IsDueSoon ? "Vence em breve" : $"Aberto em {item.OpenedOn:dd/MM/yyyy}")</small></div>
+                                </article>
+                            </li>
+                        }
+                    </ol>
+                </section>
+            }
+        </div>
+    }
+</section>

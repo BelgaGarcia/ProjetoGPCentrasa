@@ -1,0 +1,129 @@
+@using CentraSA.Domain.Enums
+@model CentraSA.Application.DailyMeetings.DailyMeetingDetailsData
+@{
+    Layout = "_PresentationLayout";
+    ViewData["Title"] = $"Reunião {Model.MeetingDate:dd/MM/yyyy}";
+    ViewData["BackController"] = "DailyMeetings";
+    bool finished = Model.Status == MeetingStatus.Finished;
+    static string SectionLabel(MeetingSection section) => section switch
+    {
+        MeetingSection.Overdue => "Atrasados",
+        MeetingSection.DueSoon => "Próximos prazos",
+        MeetingSection.PendingTasks => "Pendências",
+        MeetingSection.Smuds => "SMUDs",
+        MeetingSection.SupportTickets => "Chamados",
+        MeetingSection.RecentlyCompleted => "Concluídos recentemente",
+        _ => section.ToString(),
+    };
+    static string SourceLabel(TrackedEntityType sourceType) => sourceType switch
+    {
+        TrackedEntityType.PendingTask => "Pendência",
+        TrackedEntityType.Smud => "SMUD",
+        TrackedEntityType.SupportTicket => "Chamado",
+        _ => "Item",
+    };
+}
+
+<partial name="_FlashMessages" />
+<section class="meeting-presentation">
+    <header class="meeting-presentation__header">
+        <div>
+            <span class="eyebrow">Roteiro diário · @Model.MeetingDate.ToString("dd/MM/yyyy")</span>
+            <h1>@(finished ? "Registro da reunião" : "Reunião em andamento")</h1>
+            <p><strong>@Model.PresentedCount</strong> de <strong>@Model.Items.Count</strong> itens apresentados.</p>
+        </div>
+        <span class="status-badge" data-status-color="@(finished ? "green" : "amber")">@(finished ? "Finalizada" : "Rascunho")</span>
+    </header>
+
+    @if (!string.IsNullOrWhiteSpace(Model.GeneralNotes))
+    {
+        <aside class="meeting-presentation__general"><strong>Notas gerais</strong><p>@Model.GeneralNotes</p></aside>
+    }
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="presentation-empty"><p>Nenhum item selecionado para esta reunião.</p></div>
+    }
+    else
+    {
+        <div class="meeting-presentation__sections">
+            @foreach (var group in Model.Items.GroupBy(item => item.Section))
+            {
+                <section class="meeting-presentation-section">
+                    <header><span>@SectionLabel(group.Key)</span><strong>@group.Count()</strong></header>
+                    <ol>
+                        @foreach (var item in group)
+                        {
+                            <li class="meeting-presentation-card @(item.WasPresented ? "is-presented" : string.Empty)">
+                                <div class="meeting-presentation-card__main">
+                                    <div class="meeting-builder-item__topline">
+                                        <span class="meeting-source-badge">@SourceLabel(item.SourceType)</span>
+                                        <span class="status-badge" data-status-color="blue">@item.SnapshotStatus</span>
+                                        @if (item.OriginalIsCompleted)
+                                        {
+                                            <span class="status-badge" data-status-color="green">Original concluído</span>
+                                        }
+                                    </div>
+                                    <h2>@item.SnapshotTitle</h2>
+                                    <div class="meeting-presentation-card__relation">
+                                        <span><small>Responsável</small><strong>@(item.SnapshotResponsible ?? "Não definido")</strong></span>
+                                        <i aria-hidden="true"></i>
+                                        <span><small>Prazo</small><strong>@(item.SnapshotDueDate?.ToString("dd/MM/yyyy") ?? "Sem prazo")</strong></span>
+                                    </div>
+                                </div>
+                                <div class="meeting-presentation-card__notes">
+                                    <strong>Notas da condução</strong>
+                                    @if (finished)
+                                    {
+                                        <p>@(item.PresentationNotes ?? "Sem notas registradas.")</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="print-only">@(item.PresentationNotes ?? "Sem notas registradas.")</p>
+                                        <form asp-action="UpdateNotes" asp-route-id="@Model.Id" asp-route-itemId="@item.Id" method="post" data-no-print>
+                                            <input type="hidden" name="version" value="@Model.Version" />
+                                            <input type="hidden" name="presentation" value="true" />
+                                            <textarea class="form-control" name="notes" rows="2" maxlength="2000"
+                                                      aria-label="Notas da condução para @item.SnapshotTitle">@item.PresentationNotes</textarea>
+                                            <button class="button button--ghost button--compact" type="submit">Salvar nota</button>
+                                        </form>
+                                    }
+                                </div>
+                                @if (!finished)
+                                {
+                                    <div class="meeting-presentation-card__actions" data-no-print>
+                                        <form asp-action="MarkPresented" asp-route-id="@Model.Id" asp-route-itemId="@item.Id" method="post">
+                                            <input type="hidden" name="version" value="@Model.Version" />
+                                            <input type="hidden" name="presentation" value="true" />
+                                            <input type="hidden" name="wasPresented" value="@(!item.WasPresented ? "true" : "false")" />
+                                            <button class="button button--secondary button--compact" type="submit">@(item.WasPresented ? "Reabrir" : "Apresentado")</button>
+                                        </form>
+                                        @if (!item.OriginalIsCompleted)
+                                        {
+                                            <form asp-action="CompleteOriginal" asp-route-id="@Model.Id" asp-route-itemId="@item.Id" method="post">
+                                                <input type="hidden" name="version" value="@Model.Version" />
+                                                <input type="hidden" name="presentation" value="true" />
+                                                <button class="button button--primary button--compact" type="submit">Concluir original</button>
+                                            </form>
+                                        }
+                                    </div>
+                                }
+                            </li>
+                        }
+                    </ol>
+                </section>
+            }
+        </div>
+    }
+
+    @if (!finished)
+    {
+        <footer class="meeting-presentation__finish" data-no-print>
+            <span>Revise os itens antes de encerrar. A finalização torna a sessão somente leitura.</span>
+            <form asp-action="Finish" asp-route-id="@Model.Id" method="post">
+                <input type="hidden" name="version" value="@Model.Version" />
+                <button class="button button--primary" type="submit">Finalizar reunião</button>
+            </form>
+        </footer>
+    }
+</section>

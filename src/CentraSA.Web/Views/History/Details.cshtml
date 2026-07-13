@@ -1,0 +1,35 @@
+@using CentraSA.Domain.Enums
+@model CentraSA.Application.Insights.HistoryDetailsData
+@{
+    ViewData["Title"] = "Detalhe do histórico";
+    static string? SourceController(TrackedEntityType type) => type switch
+    {
+        TrackedEntityType.PendingTask => "PendingTasks",
+        TrackedEntityType.Smud => "Smuds",
+        TrackedEntityType.SupportTicket => "SupportTickets",
+        TrackedEntityType.DailyMeeting => "DailyMeetings",
+        _ => null,
+    };
+    string? sourceController = SourceController(Model.Subject.EntityType);
+}
+
+<header class="page-header">
+    <div class="page-header__copy"><span class="eyebrow">Timeline do registro</span><h1>@Model.Subject.Title</h1>@if (!string.IsNullOrWhiteSpace(Model.Subject.Subtitle)) { <p>@Model.Subject.Subtitle</p> }</div>
+    <div class="page-actions">
+        <a class="button button--ghost" asp-action="Index">Voltar ao histórico</a>
+        @if (sourceController is not null)
+        {
+            <a class="button button--secondary" asp-controller="@sourceController" asp-action="Details" asp-route-id="@Model.Subject.EntityId">Abrir registro atual</a>
+        }
+    </div>
+</header>
+
+<section class="surface-card global-history-card">
+    <header class="section-heading"><div><span class="eyebrow">Auditoria</span><h2>@Model.Events.Count evento(s)</h2></div></header>
+    <ol class="global-timeline global-timeline--detail">
+        @foreach (var entry in Model.Events)
+        {
+            <li><time><strong>@entry.OccurredAtUtc.ToLocalTime().ToString("dd/MM/yyyy")</strong><span>@entry.OccurredAtUtc.ToLocalTime().ToString("HH:mm")</span></time><span class="global-timeline__marker" aria-hidden="true"></span><div class="global-timeline__content"><span>@entry.ActionLabel</span><h3>@entry.Summary</h3></div></li>
+        }
+    </ol>
+</section>

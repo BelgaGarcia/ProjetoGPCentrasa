@@ -19,13 +19,13 @@ internal static class ReferenceDataSeeder
         var definitions = new[]
         {
             new AreaSeed("CentraSA", TeamAreaKind.InternalArea, "blue"),
-            new AreaSeed("Fiscal", TeamAreaKind.InternalArea, "yellow"),
-            new AreaSeed("Faturamento", TeamAreaKind.InternalArea, "purple"),
-            new AreaSeed("Recebimento", TeamAreaKind.InternalArea, "cyan"),
-            new AreaSeed("PCP", TeamAreaKind.InternalArea, "yellow"),
-            new AreaSeed("Equipe Protheus", TeamAreaKind.InternalArea, "blue"),
-            new AreaSeed("DSM", TeamAreaKind.ExternalTeam, "red"),
-            new AreaSeed("TOTVS", TeamAreaKind.ExternalTeam, "blue"),
+            new AreaSeed("Operações", TeamAreaKind.InternalArea, "yellow"),
+            new AreaSeed("Atendimento", TeamAreaKind.InternalArea, "purple"),
+            new AreaSeed("Qualidade", TeamAreaKind.InternalArea, "cyan"),
+            new AreaSeed("Planejamento", TeamAreaKind.InternalArea, "yellow"),
+            new AreaSeed("Equipe Plataforma", TeamAreaKind.InternalArea, "blue"),
+            new AreaSeed("Fornecedor Alfa", TeamAreaKind.ExternalTeam, "red"),
+            new AreaSeed("Fornecedor Beta", TeamAreaKind.ExternalTeam, "blue"),
         };
 
         var existing = await dbContext.TeamAreas
@@ -64,7 +64,7 @@ internal static class ReferenceDataSeeder
             new StatusSeed(WorkItemScope.PendingTask, SeedCodes.PendingCancelled, "Cancelada", LifecycleState.Cancelled, "gray", 50),
 
             new StatusSeed(WorkItemScope.Smud, SeedCodes.SmudPendingCentraSa, "Pendente CentraSA", LifecycleState.Active, "yellow", 10),
-            new StatusSeed(WorkItemScope.Smud, SeedCodes.SmudPendingDsm, "Pendente DSM", LifecycleState.Active, "purple", 20),
+            new StatusSeed(WorkItemScope.Smud, SeedCodes.SmudPendingSupplier, "Pendente fornecedor", LifecycleState.Active, "purple", 20),
             new StatusSeed(WorkItemScope.Smud, SeedCodes.SmudAwaitingValidation, "Aguardando validação", LifecycleState.Active, "yellow", 30),
             new StatusSeed(WorkItemScope.Smud, SeedCodes.SmudInDevelopment, "Em desenvolvimento", LifecycleState.Active, "blue", 40),
             new StatusSeed(WorkItemScope.Smud, SeedCodes.SmudCompleted, "Concluído", LifecycleState.Completed, "green", 50),
@@ -111,10 +111,10 @@ internal static class ReferenceDataSeeder
             new CategorySeed(WorkItemScope.PendingTask, SeedCodes.PendingOperational, "Operacional", "blue", 10),
             new CategorySeed(WorkItemScope.PendingTask, SeedCodes.PendingValidation, "Validação", "yellow", 20),
             new CategorySeed(WorkItemScope.PendingTask, SeedCodes.PendingReport, "Relatório", "cyan", 30),
-            new CategorySeed(WorkItemScope.SupportTicket, SeedCodes.TicketPe, "Chamado P.E.", "red", 10),
-            new CategorySeed(WorkItemScope.SupportTicket, SeedCodes.TicketFrozen, "Congelado", "cyan", 20),
-            new CategorySeed(WorkItemScope.SupportTicket, SeedCodes.TicketPendingCentraSaTests, "Pendente de testes CentraSA", "yellow", 30),
-            new CategorySeed(WorkItemScope.SupportTicket, SeedCodes.TicketNonPe, "Chamado não P.E.", "purple", 40),
+            new CategorySeed(WorkItemScope.SupportTicket, SeedCodes.TicketIncident, "Incidente", "red", 10),
+            new CategorySeed(WorkItemScope.SupportTicket, SeedCodes.TicketObservation, "Em observação", "cyan", 20),
+            new CategorySeed(WorkItemScope.SupportTicket, SeedCodes.TicketPendingInternalTests, "Pendente de testes internos", "yellow", 30),
+            new CategorySeed(WorkItemScope.SupportTicket, SeedCodes.TicketRequest, "Solicitação", "purple", 40),
         };
 
         var existing = await dbContext.Categories

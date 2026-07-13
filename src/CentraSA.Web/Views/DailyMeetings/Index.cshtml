@@ -1,0 +1,71 @@
+@using CentraSA.Domain.Enums
+@model CentraSA.Application.DailyMeetings.DailyMeetingOverviewData
+@{
+    ViewData["Title"] = "Reunião diária";
+    static string StatusLabel(MeetingStatus status) => status == MeetingStatus.Finished ? "Finalizada" : "Rascunho";
+}
+
+<header class="page-header">
+    <div class="page-header__copy">
+        <span class="eyebrow">Roteiro persistido</span>
+        <h1>Reunião diária</h1>
+        <p>Prepare uma pauta única com pendências, SMUDs e chamados, conduza a reunião e preserve o retrato apresentado.</p>
+    </div>
+    <div class="page-actions">
+        <a class="button button--primary" asp-action="Create">Preparar reunião</a>
+    </div>
+</header>
+
+@if (Model.LatestMeeting is not null)
+{
+    <section class="meeting-latest surface-card" aria-labelledby="latest-meeting-title">
+        <div>
+            <span class="eyebrow">Última reunião</span>
+            <h2 id="latest-meeting-title">@Model.LatestMeeting.MeetingDate.ToString("dd/MM/yyyy")</h2>
+            <p>@Model.LatestMeeting.PresentedCount de @Model.LatestMeeting.ItemCount itens apresentados.</p>
+        </div>
+        <div class="meeting-latest__actions">
+            <span class="status-badge" data-status-color="@(Model.LatestMeeting.Status == MeetingStatus.Finished ? "green" : "amber")">@StatusLabel(Model.LatestMeeting.Status)</span>
+            <a class="button button--secondary button--compact" asp-action="Details" asp-route-id="@Model.LatestMeeting.Id">Abrir</a>
+            @if (Model.LatestMeeting.Status == MeetingStatus.Draft)
+            {
+                <a class="button button--primary button--compact" asp-action="Presentation" asp-route-id="@Model.LatestMeeting.Id">Apresentar</a>
+            }
+        </div>
+    </section>
+}
+
+<section class="surface-card meeting-history-card" aria-labelledby="meeting-history-title">
+    <header class="section-heading">
+        <div><span class="eyebrow">Sessões salvas</span><h2 id="meeting-history-title">Histórico de reuniões</h2></div>
+        <span class="summary-count">@Model.Meetings.Count</span>
+    </header>
+
+    @if (Model.Meetings.Count == 0)
+    {
+        <div class="meeting-empty">
+            <h3>Nenhuma reunião preparada</h3>
+            <p>Crie o primeiro roteiro; os itens prioritários já virão sugeridos.</p>
+        </div>
+    }
+    else
+    {
+        <div class="meeting-table-wrap">
+            <table class="meeting-table">
+                <thead><tr><th>Data</th><th>Status</th><th>Progresso</th><th>Início</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var meeting in Model.Meetings)
+                    {
+                        <tr>
+                            <td><strong>@meeting.MeetingDate.ToString("dd/MM/yyyy")</strong></td>
+                            <td><span class="status-badge" data-status-color="@(meeting.Status == MeetingStatus.Finished ? "green" : "amber")">@StatusLabel(meeting.Status)</span></td>
+                            <td>@meeting.PresentedCount / @meeting.ItemCount apresentados</td>
+                            <td>@meeting.StartedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                            <td><a class="button button--ghost button--compact" asp-action="Details" asp-route-id="@meeting.Id">Consultar</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

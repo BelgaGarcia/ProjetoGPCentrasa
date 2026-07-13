@@ -1,72 +1,101 @@
+@using CentraSA.Application.Insights
+@using CentraSA.Domain.Enums
+@model DashboardData
 @{
-    ViewData["Title"] = "Início";
-    var header = new PageHeaderViewModel(
-        "Central de operações",
-        "A base local está pronta para receber os módulos de acompanhamento da equipe.",
-        "Visão geral");
+    ViewData["Title"] = "Visão executiva";
+    static string SourceController(TrackedEntityType sourceType) => sourceType switch
+    {
+        TrackedEntityType.PendingTask => "PendingTasks",
+        TrackedEntityType.Smud => "Smuds",
+        TrackedEntityType.SupportTicket => "SupportTickets",
+        _ => "Home",
+    };
 }
 
-<partial name="_PageHeader" model="header" />
+<header class="page-header dashboard-header">
+    <div class="page-header__copy">
+        <span class="eyebrow">Dados consolidados do banco</span>
+        <h1>Visão executiva</h1>
+        <p>Prioridades, prazos e movimentações recentes dos três módulos operacionais.</p>
+    </div>
+    <div class="page-actions">
+        <a class="button button--secondary" asp-controller="History" asp-action="Index">Histórico global</a>
+        <a class="button button--primary" asp-controller="DailyMeetings" asp-action="Create">Preparar reunião</a>
+    </div>
+</header>
 
-<section class="home-grid" aria-label="Situação do projeto">
-    <article class="surface-card welcome-card">
-        <div class="welcome-card__content">
-            <div>
-                <span class="eyebrow">Ambiente local protegido</span>
-                <h2>Uma central feita para a rotina da CentraSA.</h2>
-                <p>Persistência, autenticação e identidade visual já trabalham juntas. Os próximos marcos transformam essa base nos quadros operacionais das referências.</p>
-            </div>
-            <div class="milestone-line" aria-label="Recursos disponíveis">
-                <span>SQLite local</span>
-                <span>Acesso seguro</span>
-                <span>Seed sanitizado</span>
-                <span>Layout responsivo</span>
-            </div>
-        </div>
-    </article>
-
-    <aside class="surface-card next-step-card">
-        <span class="next-step-card__number" aria-hidden="true">04</span>
-        <span class="eyebrow">Próximo marco</span>
-        <h2>Gestão de pendências</h2>
-        <p>Checklist, criação rápida, filtros, ordenação e modo de apresentação inspirado no Gamma.</p>
-        <span class="status-badge status-badge--blue">Planejado</span>
-    </aside>
+<section class="dashboard-metrics" aria-label="Contadores operacionais">
+    <a class="surface-card dashboard-metric dashboard-metric--blue" asp-controller="Dashboard" asp-action="Items" asp-route-SourceType="PendingTask" asp-route-State="Active">
+        <span>Pendências ativas</span><strong>@Model.ActivePendingTasks</strong><small>Abrir listagem filtrada</small>
+    </a>
+    <a class="surface-card dashboard-metric dashboard-metric--purple" asp-controller="Dashboard" asp-action="Items" asp-route-SourceType="Smud" asp-route-State="Active">
+        <span>SMUDs ativos</span><strong>@Model.ActiveSmuds</strong><small>Abrir listagem filtrada</small>
+    </a>
+    <a class="surface-card dashboard-metric dashboard-metric--cyan" asp-controller="Dashboard" asp-action="Items" asp-route-SourceType="SupportTicket" asp-route-State="Active">
+        <span>Chamados ativos</span><strong>@Model.ActiveSupportTickets</strong><small>Abrir listagem filtrada</small>
+    </a>
+    <a class="surface-card dashboard-metric dashboard-metric--red" asp-controller="Dashboard" asp-action="Items" asp-route-State="Overdue">
+        <span>Itens atrasados</span><strong>@Model.OverdueCount</strong><small>Prazo anterior a hoje</small>
+    </a>
+    <a class="surface-card dashboard-metric dashboard-metric--yellow" asp-controller="Dashboard" asp-action="Items" asp-route-State="DueSoon">
+        <span>Próximos 7 dias</span><strong>@Model.DueSoonCount</strong><small>Hoje também está incluído</small>
+    </a>
+    <a class="surface-card dashboard-metric dashboard-metric--green" asp-controller="Dashboard" asp-action="Items" asp-route-State="RecentlyCompleted">
+        <span>Concluídos recentes</span><strong>@Model.RecentlyCompletedCount</strong><small>Últimos 7 dias</small>
+    </a>
 </section>
 
-<section aria-labelledby="modules-title">
-    <div class="section-heading">
-        <div>
-            <span class="eyebrow">Estrutura preparada</span>
-            <h2 id="modules-title">Módulos operacionais</h2>
-        </div>
-        <p>As entradas serão liberadas marco a marco.</p>
-    </div>
+<section class="dashboard-columns">
+    <article class="surface-card dashboard-panel" aria-labelledby="deadlines-title">
+        <header class="section-heading">
+            <div><span class="eyebrow">Ordem cronológica</span><h2 id="deadlines-title">Prazos prioritários</h2></div>
+            <a asp-controller="Dashboard" asp-action="Items" asp-route-State="Active">Ver todos</a>
+        </header>
+        @if (Model.Deadlines.Count == 0)
+        {
+            <div class="dashboard-empty"><p>Nenhum prazo ativo registrado.</p></div>
+        }
+        else
+        {
+            <ol class="dashboard-deadlines">
+                @foreach (var item in Model.Deadlines)
+                {
+                    <li class="@(item.IsOverdue ? "is-overdue" : item.IsDueSoon ? "is-soon" : string.Empty)">
+                        <time>@item.DueDate?.ToString("dd/MM")</time>
+                        <div><span>@item.SourceLabel · @item.Reference</span><strong>@item.Title</strong><small>@item.Status</small></div>
+                        <a asp-controller="@SourceController(item.SourceType)" asp-action="Details" asp-route-id="@item.SourceId" aria-label="Abrir @item.Title">Abrir</a>
+                    </li>
+                }
+            </ol>
+        }
+    </article>
 
-    <div class="module-grid">
-        <article class="surface-card module-card module-card--yellow">
-            <div class="module-card__top">
-                <span class="module-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-check-square"></use></svg></span>
-                <span class="status-badge status-badge--yellow">Marco 4</span>
-            </div>
-            <h3>Pendências</h3>
-            <p>Checklist da equipe, responsáveis, prazos e apresentação.</p>
-        </article>
-        <article class="surface-card module-card module-card--purple">
-            <div class="module-card__top">
-                <span class="module-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-layers"></use></svg></span>
-                <span class="status-badge status-badge--purple">Marco 5</span>
-            </div>
-            <h3>SMUDs</h3>
-            <p>Quadro por status com ações, responsáveis e vencimentos.</p>
-        </article>
-        <article class="surface-card module-card module-card--red">
-            <div class="module-card__top">
-                <span class="module-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-ticket"></use></svg></span>
-                <span class="status-badge status-badge--red">Marco 6</span>
-            </div>
-            <h3>Chamados</h3>
-            <p>Relação visual entre categoria, equipe responsável e prazo.</p>
-        </article>
-    </div>
+    <article class="surface-card dashboard-panel" aria-labelledby="activity-title">
+        <header class="section-heading">
+            <div><span class="eyebrow">Auditoria básica</span><h2 id="activity-title">Atividade recente</h2></div>
+            <a asp-controller="History" asp-action="Index">Ver histórico</a>
+        </header>
+        @if (Model.RecentActivity.Count == 0)
+        {
+            <div class="dashboard-empty"><p>Nenhuma atividade registrada.</p></div>
+        }
+        else
+        {
+            <ol class="dashboard-activity">
+                @foreach (var entry in Model.RecentActivity)
+                {
+                    <li>
+                        <span class="dashboard-activity__marker" aria-hidden="true"></span>
+                        <div><span>@entry.EntityLabel · @entry.ActionLabel</span><strong>@entry.Summary</strong><time>@entry.OccurredAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</time></div>
+                        <a asp-controller="History" asp-action="Details" asp-route-entityType="@entry.EntityType" asp-route-id="@entry.EntityId">Detalhes</a>
+                    </li>
+                }
+            </ol>
+        }
+    </article>
+</section>
+
+<section class="surface-card dashboard-meeting-callout">
+    <div><span class="eyebrow">Reunião diária</span><h2>@Model.DraftMeetingCount rascunho(s) em andamento</h2><p>Continue uma sessão preparada ou monte a próxima pauta.</p></div>
+    <a class="button button--ghost" asp-controller="DailyMeetings" asp-action="Index">Abrir reuniões</a>
 </section>

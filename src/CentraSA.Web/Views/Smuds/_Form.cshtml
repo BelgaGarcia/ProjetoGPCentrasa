@@ -1,0 +1,88 @@
+@model CentraSA.Web.ViewModels.Smuds.SmudFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input asp-for="Id" type="hidden" />
+<input asp-for="Version" type="hidden" />
+
+<div class="form-grid form-grid--wide">
+    <div class="field-group">
+        <label asp-for="Code" class="form-label"></label>
+        <input asp-for="Code" class="form-control" placeholder="Ex.: SMUD084" autofocus />
+        <span asp-validation-for="Code" class="text-danger"></span>
+        <span class="form-text">Espaços, hífens e zeros à esquerda são normalizados ao salvar.</span>
+    </div>
+    <div class="field-group">
+        <label asp-for="StatusId" class="form-label"></label>
+        <select asp-for="StatusId" class="form-select">
+            <option value="">Selecione</option>
+            @foreach (var status in Model.Options.Statuses)
+            {
+                <option value="@status.Id">@status.Name</option>
+            }
+        </select>
+        <span asp-validation-for="StatusId" class="text-danger"></span>
+    </div>
+    <div class="field-group form-grid__full">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="field-group form-grid__full">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="field-group">
+        <label asp-for="ResponsibleAreaId" class="form-label"></label>
+        <select asp-for="ResponsibleAreaId" class="form-select">
+            <option value="">Selecione</option>
+            @foreach (var area in Model.Options.Areas)
+            {
+                <option value="@area.Id">@area.Name</option>
+            }
+        </select>
+        <span asp-validation-for="ResponsibleAreaId" class="text-danger"></span>
+    </div>
+    <div class="field-group">
+        <label asp-for="ResponsiblePersonId" class="form-label"></label>
+        <select asp-for="ResponsiblePersonId" class="form-select">
+            <option value="">Não definida</option>
+            @foreach (var person in Model.Options.People)
+            {
+                <option value="@person.Id">@person.Name@(string.IsNullOrWhiteSpace(person.Group) ? string.Empty : $" · {person.Group}")</option>
+            }
+        </select>
+    </div>
+    <div class="field-group">
+        <label asp-for="Priority" class="form-label"></label>
+        <select asp-for="Priority" class="form-select">
+            <option value="Low">Baixa</option>
+            <option value="Medium">Média</option>
+            <option value="High">Alta</option>
+            <option value="Critical">Crítica</option>
+        </select>
+    </div>
+    <div class="field-group">
+        <label asp-for="OpenedOn" class="form-label"></label>
+        <input asp-for="OpenedOn" type="date" class="form-control" />
+    </div>
+    <div class="field-group">
+        <label asp-for="DueDate" class="form-label"></label>
+        <input asp-for="DueDate" type="date" class="form-control" />
+    </div>
+    <div class="field-group form-grid__full">
+        <label asp-for="RequiredAction" class="form-label"></label>
+        <textarea asp-for="RequiredAction" class="form-control" rows="3" placeholder="Próximo passo necessário para o SMUD avançar"></textarea>
+        <span asp-validation-for="RequiredAction" class="text-danger"></span>
+    </div>
+    <div class="field-group form-grid__full">
+        <label asp-for="Notes" class="form-label"></label>
+        <textarea asp-for="Notes" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="form-actions">
+    <button class="button button--primary" type="submit">Salvar SMUD</button>
+    <a class="button button--ghost" asp-action="Index">Cancelar</a>
+</div>

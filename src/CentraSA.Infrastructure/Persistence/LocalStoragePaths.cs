@@ -8,7 +8,6 @@ public sealed class LocalStoragePaths
     {
         RootDirectory = rootDirectory;
         DataDirectory = new DirectoryInfo(Path.Combine(rootDirectory.FullName, "Data"));
-        BackupDirectory = new DirectoryInfo(Path.Combine(rootDirectory.FullName, "Backups"));
         DataProtectionKeysDirectory = new DirectoryInfo(Path.Combine(rootDirectory.FullName, "Keys"));
         DatabaseFile = new FileInfo(Path.Combine(DataDirectory.FullName, "centrasa.db"));
     }
@@ -16,8 +15,6 @@ public sealed class LocalStoragePaths
     public DirectoryInfo RootDirectory { get; }
 
     public DirectoryInfo DataDirectory { get; }
-
-    public DirectoryInfo BackupDirectory { get; }
 
     public DirectoryInfo DataProtectionKeysDirectory { get; }
 
@@ -37,7 +34,6 @@ public sealed class LocalStoragePaths
     {
         RootDirectory.Create();
         DataDirectory.Create();
-        BackupDirectory.Create();
         DataProtectionKeysDirectory.Create();
     }
 }

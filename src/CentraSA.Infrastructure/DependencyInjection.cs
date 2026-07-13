@@ -1,5 +1,10 @@
 using CentraSA.Application.Abstractions;
+using CentraSA.Application.DailyMeetings;
+using CentraSA.Application.Insights;
+using CentraSA.Application.Lookups;
 using CentraSA.Application.PendingTasks;
+using CentraSA.Application.Smuds;
+using CentraSA.Application.SupportTickets;
 using CentraSA.Infrastructure.Identity;
 using CentraSA.Infrastructure.Persistence;
 using CentraSA.Infrastructure.Repositories;
@@ -31,7 +36,12 @@ public static class DependencyInjection
                 sqlite => sqlite.MigrationsAssembly(typeof(CentraSaDbContext).Assembly.FullName)));
 
         services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
+        services.AddScoped<IDailyMeetingRepository, DailyMeetingRepository>();
+        services.AddScoped<IInsightRepository, InsightRepository>();
+        services.AddScoped<ILookupRepository, LookupRepository>();
         services.AddScoped<IPendingTaskRepository, PendingTaskRepository>();
+        services.AddScoped<ISmudRepository, SmudRepository>();
+        services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
 
         services.AddIdentityCore<ApplicationUser>(options =>
             {

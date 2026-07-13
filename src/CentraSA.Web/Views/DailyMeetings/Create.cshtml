@@ -1,0 +1,24 @@
+@model CentraSA.Web.ViewModels.DailyMeetings.DailyMeetingBuilderViewModel
+@{
+    ViewData["Title"] = "Preparar reunião";
+}
+
+<header class="page-header">
+    <div class="page-header__copy">
+        <span class="eyebrow">Nova sessão</span>
+        <h1>Preparar reunião diária</h1>
+        <p>As prioridades estão pré-selecionadas. Cada origem tem uma única seção escolhida.</p>
+    </div>
+</header>
+
+<form asp-action="Create" method="post" class="meeting-builder-form">
+    <partial name="_BuilderForm" model="Model" />
+    <div class="form-actions meeting-builder-actions">
+        <button class="button button--primary" type="submit">Salvar rascunho</button>
+        <a class="button button--ghost" asp-action="Index">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

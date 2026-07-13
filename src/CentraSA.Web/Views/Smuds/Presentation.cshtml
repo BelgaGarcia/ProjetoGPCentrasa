@@ -1,0 +1,62 @@
+@model CentraSA.Application.Smuds.SmudBoardData
+@{
+    Layout = "_PresentationLayout";
+    ViewData["Title"] = "Quadro de SMUDs";
+    ViewData["BackController"] = "Smuds";
+    bool showFinalized = ViewData["ShowFinalized"] is true;
+}
+
+<section class="smud-presentation">
+    <header class="gamma-presentation__header">
+        <div>
+            <span class="eyebrow">Central CentraSA</span>
+            <h1>Quadro operacional de SMUDs</h1>
+            <p><strong>@Model.TotalCount</strong> cartões exibidos, agrupados pelo status salvo.</p>
+        </div>
+        <form method="get" data-no-print>
+            <label class="presentation-toggle">
+                <input type="checkbox" name="showFinalized" value="true" checked="@showFinalized" onchange="this.form.submit()" />
+                Mostrar finalizados
+            </label>
+        </form>
+    </header>
+
+    @if (Model.TotalCount == 0)
+    {
+        <div class="presentation-empty"><p>Nenhum SMUD disponível para apresentar.</p></div>
+    }
+    else
+    {
+        <div class="smud-board smud-board--presentation" aria-label="SMUDs por status">
+            @foreach (var column in Model.Columns)
+            {
+                <section class="smud-column surface-card" aria-labelledby="presentation-column-@column.StatusId">
+                    <header class="smud-column__header">
+                        <div>
+                            <span class="smud-column__indicator" data-status-color="@column.ColorToken" aria-hidden="true"></span>
+                            <h2 id="presentation-column-@column.StatusId">@column.Status</h2>
+                        </div>
+                        <span class="smud-column__total">@column.Total</span>
+                    </header>
+                    <ol class="smud-card-list">
+                        @foreach (var item in column.Cards)
+                        {
+                            <li class="smud-card @(item.IsOverdue ? "is-overdue" : string.Empty)">
+                                <div class="smud-card__heading"><strong class="smud-card__code">@item.Code</strong></div>
+                                <h3>@item.Title</h3>
+                                @if (!string.IsNullOrWhiteSpace(item.RequiredAction))
+                                {
+                                    <div class="smud-card__action"><span>Ação necessária</span><p>@item.RequiredAction</p></div>
+                                }
+                                <p class="smud-presentation__meta">
+                                    @item.Area@(string.IsNullOrWhiteSpace(item.Person) ? string.Empty : $" · {item.Person}")
+                                    · @(item.DueDate?.ToString("dd/MM/yyyy") ?? "Sem prazo")
+                                </p>
+                            </li>
+                        }
+                    </ol>
+                </section>
+            }
+        </div>
+    }
+</section>

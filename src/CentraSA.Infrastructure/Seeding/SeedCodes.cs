@@ -9,7 +9,7 @@ internal static class SeedCodes
     public const string PendingCancelled = "CANCELLED";
 
     public const string SmudPendingCentraSa = "PENDING_CENTRASA";
-    public const string SmudPendingDsm = "PENDING_DSM";
+    public const string SmudPendingSupplier = "PENDING_SUPPLIER";
     public const string SmudAwaitingValidation = "AWAITING_VALIDATION";
     public const string SmudInDevelopment = "IN_DEVELOPMENT";
     public const string SmudCompleted = "COMPLETED";
@@ -26,8 +26,8 @@ internal static class SeedCodes
     public const string PendingValidation = "VALIDATION";
     public const string PendingReport = "REPORT";
 
-    public const string TicketPe = "TICKET_PE";
-    public const string TicketFrozen = "FROZEN";
-    public const string TicketPendingCentraSaTests = "PENDING_CENTRASA_TESTS";
-    public const string TicketNonPe = "TICKET_NON_PE";
+    public const string TicketIncident = "INCIDENT";
+    public const string TicketObservation = "OBSERVATION";
+    public const string TicketPendingInternalTests = "PENDING_INTERNAL_TESTS";
+    public const string TicketRequest = "REQUEST";
 }

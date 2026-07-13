@@ -1,0 +1,46 @@
+@using CentraSA.Application.Lookups
+@model LookupOverviewData
+@{
+    ViewData["Title"] = "Cadastros auxiliares";
+    var sections = new[]
+    {
+        (Title: "Áreas e equipes", Kind: LookupKind.TeamArea, Items: Model.Areas),
+        (Title: "Pessoas", Kind: LookupKind.Person, Items: Model.People),
+        (Title: "Status", Kind: LookupKind.Status, Items: Model.Statuses),
+        (Title: "Categorias", Kind: LookupKind.Category, Items: Model.Categories),
+    };
+}
+
+<header class="page-header">
+    <div class="page-header__copy"><span class="eyebrow">Configuração operacional</span><h1>Cadastros auxiliares</h1><p>Gerencie opções usadas nos formulários sem apagar referências históricas.</p></div>
+</header>
+
+<nav class="lookup-jump" aria-label="Seções de cadastros">
+    @foreach (var lookupSection in sections) { <a href="#lookup-@lookupSection.Kind">@lookupSection.Title</a> }
+</nav>
+
+<div class="lookup-sections">
+    @foreach (var lookupSection in sections)
+    {
+        <section class="surface-card lookup-section" id="lookup-@lookupSection.Kind">
+            <header class="section-heading"><div><span class="eyebrow">@lookupSection.Items.Count registro(s)</span><h2>@lookupSection.Title</h2></div><a class="button button--primary button--compact" asp-action="Create" asp-route-kind="@lookupSection.Kind">Novo</a></header>
+            <div class="lookup-table-wrap">
+                <table class="lookup-table">
+                    <thead><tr><th>Nome</th><th>Contexto</th><th>Código/ordem</th><th>Situação</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var item in lookupSection.Items)
+                        {
+                            <tr class="@(!item.IsActive ? "is-inactive" : string.Empty)">
+                                <td><span class="smud-column__indicator" data-status-color="@item.ColorToken"></span><strong>@item.Name</strong></td>
+                                <td>@item.Context</td>
+                                <td>@(item.Code ?? (item.SortOrder?.ToString() ?? "—"))</td>
+                                <td><span class="status-badge" data-status-color="@(item.IsActive ? "green" : "gray")">@(item.IsActive ? "Ativo" : "Inativo")</span></td>
+                                <td><div class="lookup-actions"><a class="button button--ghost button--compact" asp-action="Edit" asp-route-kind="@item.Kind" asp-route-id="@item.Id">Editar</a><form asp-action="ToggleActive" asp-route-kind="@item.Kind" asp-route-id="@item.Id" method="post"><input type="hidden" name="activate" value="@(!item.IsActive ? "true" : "false")" /><button class="button button--secondary button--compact" type="submit">@(item.IsActive ? "Desativar" : "Ativar")</button></form></div></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+</div>

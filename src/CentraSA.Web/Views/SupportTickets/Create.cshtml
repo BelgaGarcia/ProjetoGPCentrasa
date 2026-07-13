@@ -1,0 +1,14 @@
+@model CentraSA.Web.ViewModels.SupportTickets.SupportTicketFormViewModel
+@{
+    ViewData["Title"] = "Novo chamado";
+}
+
+<partial name="_PageHeader" model="@(new PageHeaderViewModel("Novo chamado", "Registre a categoria, a equipe responsável, o prazo e a ação pendente.", "Chamados"))" />
+
+<form asp-action="Create" method="post" class="surface-card task-form-card">
+    <partial name="_Form" model="Model" />
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

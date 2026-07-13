@@ -1,0 +1,14 @@
+@model CentraSA.Web.ViewModels.Smuds.SmudFormViewModel
+@{
+    ViewData["Title"] = "Novo SMUD";
+}
+
+<partial name="_PageHeader" model="@(new PageHeaderViewModel("Novo SMUD", "Registre a customização, o status atual e o próximo passo operacional.", "SMUDs"))" />
+
+<form asp-action="Create" method="post" class="surface-card task-form-card">
+    <partial name="_Form" model="Model" />
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

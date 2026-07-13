@@ -1,0 +1,30 @@
+@model CentraSA.Web.ViewModels.SupportTickets.SupportTicketIndexViewModel
+@{
+    ViewData["Title"] = "Chamados arquivados";
+}
+
+<partial name="_PageHeader" model="@(new PageHeaderViewModel("Chamados arquivados", "Consulte itens retirados do quadro e restaure-os quando necessário.", "Arquivo", "Voltar aos chamados", Url.Action("Index"), "arrow-right"))" />
+
+<form method="get" class="surface-card task-filters task-filters--compact" data-async-filter data-target="#ticket-board-results">
+    <div class="task-filters__search">
+        <label for="ticket-search">Buscar no arquivo</label>
+        <input id="ticket-search" asp-for="Search" class="form-control"
+               placeholder="Número, título, descrição ou ação" data-filter-search />
+    </div>
+    <div>
+        <label asp-for="CategoryId">Categoria</label>
+        <select asp-for="CategoryId" class="form-select">
+            <option value="">Todas</option>
+            @foreach (var category in Model.Data.Options.Categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="button button--secondary">Filtrar</button>
+    <a asp-action="Archived" class="button button--ghost">Limpar</a>
+</form>
+
+<div id="ticket-board-results" aria-live="polite">
+    <partial name="_Board" model="Model" />
+</div>

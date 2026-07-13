@@ -1,0 +1,38 @@
+@model CentraSA.Web.ViewModels.Insights.HistoryIndexViewModel
+
+<section class="surface-card global-history-card">
+    <header class="section-heading"><div><span class="eyebrow">Eventos encontrados</span><h2>@Model.Data.TotalCount registro(s)</h2></div></header>
+    @if (Model.Data.Items.Count == 0)
+    {
+        <div class="dashboard-empty"><p>Nenhum evento corresponde aos filtros.</p></div>
+    }
+    else
+    {
+        <ol class="global-timeline">
+            @foreach (var entry in Model.Data.Items)
+            {
+                <li>
+                    <time datetime="@entry.OccurredAtUtc.ToString("O")"><strong>@entry.OccurredAtUtc.ToLocalTime().ToString("dd/MM/yyyy")</strong><span>@entry.OccurredAtUtc.ToLocalTime().ToString("HH:mm")</span></time>
+                    <span class="global-timeline__marker" aria-hidden="true"></span>
+                    <div class="global-timeline__content"><span>@entry.EntityLabel · @entry.ActionLabel</span><h3>@entry.Summary</h3></div>
+                    <a class="button button--ghost button--compact" asp-action="Details" asp-route-entityType="@entry.EntityType" asp-route-id="@entry.EntityId">Detalhes</a>
+                </li>
+            }
+        </ol>
+    }
+
+    @if (Model.Data.TotalPages > 1)
+    {
+        <nav class="pagination-nav" aria-label="Paginação do histórico">
+            @if (Model.Data.Page > 1)
+            {
+                <a class="button button--ghost button--compact" asp-action="Index" asp-route-Search="@Model.Search" asp-route-EntityType="@Model.EntityType" asp-route-ActionType="@Model.ActionType" asp-route-FromDate="@Model.FromDate" asp-route-ToDate="@Model.ToDate" asp-route-Page="@(Model.Data.Page - 1)">Anterior</a>
+            }
+            <span>Página @Model.Data.Page de @Model.Data.TotalPages</span>
+            @if (Model.Data.Page < Model.Data.TotalPages)
+            {
+                <a class="button button--ghost button--compact" asp-action="Index" asp-route-Search="@Model.Search" asp-route-EntityType="@Model.EntityType" asp-route-ActionType="@Model.ActionType" asp-route-FromDate="@Model.FromDate" asp-route-ToDate="@Model.ToDate" asp-route-Page="@(Model.Data.Page + 1)">Próxima</a>
+            }
+        </nav>
+    }
+</section>

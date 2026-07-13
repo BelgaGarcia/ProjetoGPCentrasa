@@ -53,26 +53,40 @@
                             <svg class="icon" aria-hidden="true"><use href="#icon-check-square"></use></svg>
                             <span>Pendências</span>
                         </a>
-                        <span class="app-navigation__link is-disabled" aria-disabled="true">
+                        <a class="app-navigation__link @(currentController == "Smuds" ? "is-active" : string.Empty)"
+                           asp-controller="Smuds" asp-action="Index"
+                           aria-current="@(currentController == "Smuds" ? "page" : null)">
                             <svg class="icon" aria-hidden="true"><use href="#icon-layers"></use></svg>
-                            <span>SMUDs</span><small>Em breve</small>
-                        </span>
-                        <span class="app-navigation__link is-disabled" aria-disabled="true">
+                            <span>SMUDs</span>
+                        </a>
+                        <a class="app-navigation__link @(currentController == "SupportTickets" ? "is-active" : string.Empty)"
+                           asp-controller="SupportTickets" asp-action="Index"
+                           aria-current="@(currentController == "SupportTickets" ? "page" : null)">
                             <svg class="icon" aria-hidden="true"><use href="#icon-ticket"></use></svg>
-                            <span>Chamados</span><small>Em breve</small>
-                        </span>
+                            <span>Chamados</span>
+                        </a>
                     </div>
 
                     <div class="app-navigation__group">
                         <span class="app-navigation__label">Acompanhamento</span>
-                        <span class="app-navigation__link is-disabled" aria-disabled="true">
+                        <a class="app-navigation__link @(currentController == "DailyMeetings" ? "is-active" : string.Empty)"
+                           asp-controller="DailyMeetings" asp-action="Index"
+                           aria-current="@(currentController == "DailyMeetings" ? "page" : null)">
                             <svg class="icon" aria-hidden="true"><use href="#icon-presentation"></use></svg>
                             <span>Reunião diária</span>
-                        </span>
-                        <span class="app-navigation__link is-disabled" aria-disabled="true">
+                        </a>
+                        <a class="app-navigation__link @(currentController == "History" ? "is-active" : string.Empty)"
+                           asp-controller="History" asp-action="Index"
+                           aria-current="@(currentController == "History" ? "page" : null)">
                             <svg class="icon" aria-hidden="true"><use href="#icon-history"></use></svg>
                             <span>Histórico</span>
-                        </span>
+                        </a>
+                        <a class="app-navigation__link @(currentController == "Lookups" ? "is-active" : string.Empty)"
+                           asp-controller="Lookups" asp-action="Index"
+                           aria-current="@(currentController == "Lookups" ? "page" : null)">
+                            <svg class="icon" aria-hidden="true"><use href="#icon-settings"></use></svg>
+                            <span>Cadastros auxiliares</span>
+                        </a>
                     </div>
                 </nav>
 

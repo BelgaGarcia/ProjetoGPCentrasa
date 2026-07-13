@@ -1,0 +1,47 @@
+@using CentraSA.Application.Insights
+@using CentraSA.Domain.Enums
+@model CentraSA.Web.ViewModels.Insights.DashboardItemsViewModel
+@{
+    ViewData["Title"] = "Itens consolidados";
+}
+
+<header class="page-header">
+    <div class="page-header__copy">
+        <span class="eyebrow">Drill-down executivo</span>
+        <h1>Itens consolidados</h1>
+        <p>A listagem usa a mesma projeção que produz os contadores da visão executiva.</p>
+    </div>
+    <div class="page-actions"><a class="button button--ghost" asp-controller="Home" asp-action="Index">Voltar ao dashboard</a></div>
+</header>
+
+<form asp-action="Items" method="get" class="surface-card insight-filters" data-async-filter data-target="#operational-results">
+    <div class="field-group insight-filters__search">
+        <label asp-for="Search">Pesquisar</label>
+        <input asp-for="Search" class="form-control" placeholder="Referência, título ou status" data-filter-search />
+    </div>
+    <div class="field-group">
+        <label asp-for="SourceType">Módulo</label>
+        <select asp-for="SourceType" class="form-select">
+            <option value="">Todos</option>
+            <option value="PendingTask">Pendências</option>
+            <option value="Smud">SMUDs</option>
+            <option value="SupportTicket">Chamados</option>
+        </select>
+    </div>
+    <div class="field-group">
+        <label asp-for="State">Situação</label>
+        <select asp-for="State" class="form-select">
+            <option value="All">Todos disponíveis</option>
+            <option value="Active">Ativos</option>
+            <option value="Overdue">Atrasados</option>
+            <option value="DueSoon">Próximos 7 dias</option>
+            <option value="RecentlyCompleted">Concluídos recentemente</option>
+        </select>
+    </div>
+    <button class="button button--primary" type="submit">Aplicar filtros</button>
+    <a class="button button--ghost" asp-action="Items">Limpar</a>
+</form>
+
+<div id="operational-results" aria-live="polite">
+    <partial name="_OperationalList" model="Model" />
+</div>

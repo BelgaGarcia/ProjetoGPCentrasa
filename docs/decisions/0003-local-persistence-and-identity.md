@@ -19,5 +19,6 @@ Identity evita implementar hash, lockout, cookies e tokens de senha manualmente.
 - O banco padrão fica em `%LOCALAPPDATA%\CentraSA\Data`.
 - O primeiro administrador é criado por uma rota disponível apenas sem usuários
   e a partir da máquina local.
-- A conta e os hashes nunca entram no seed ou em futuros backups JSON.
+- A conta e os hashes nunca entram no seed. O backup lógico em JSON inicialmente
+  previsto foi dispensado para o candidato a release pela ADR 0005.
 - Troca de provedor de banco fica isolada em Infrastructure.

@@ -1,0 +1,94 @@
+@model CentraSA.Web.ViewModels.SupportTickets.SupportTicketIndexViewModel
+@{
+    ViewData["Title"] = "Chamados";
+}
+
+<header class="page-header">
+    <div class="page-header__copy">
+        <span class="eyebrow">Relações operacionais</span>
+        <h1>Quadro de chamados</h1>
+        <p>Visualize cada chamado ligado à equipe responsável e ao prazo.</p>
+    </div>
+    <div class="page-actions">
+        <a class="button button--ghost" asp-action="Archived">Arquivados</a>
+        <a class="button button--secondary" asp-action="Presentation">
+            <svg class="icon" aria-hidden="true"><use href="#icon-presentation"></use></svg>
+            Apresentar
+        </a>
+        <a class="button button--primary" asp-action="Create">
+            <svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>
+            Novo chamado
+        </a>
+    </div>
+</header>
+
+<form method="get" class="surface-card task-filters ticket-filters" data-async-filter data-target="#ticket-board-results">
+    <div class="task-filters__search">
+        <label for="ticket-search">Buscar</label>
+        <input id="ticket-search" asp-for="Search" class="form-control"
+               placeholder="Número, título, descrição ou ação" data-filter-search />
+    </div>
+    <div>
+        <label asp-for="CategoryId">Categoria</label>
+        <select asp-for="CategoryId" class="form-select">
+            <option value="">Todas</option>
+            @foreach (var category in Model.Data.Options.Categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label asp-for="AreaId">Equipe</label>
+        <select asp-for="AreaId" class="form-select">
+            <option value="">Todas</option>
+            @foreach (var area in Model.Data.Options.Areas)
+            {
+                <option value="@area.Id">@area.Name</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label asp-for="PersonId">Pessoa</label>
+        <select asp-for="PersonId" class="form-select">
+            <option value="">Todas</option>
+            @foreach (var person in Model.Data.Options.People)
+            {
+                <option value="@person.Id">@person.Name</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label asp-for="StatusId">Status</label>
+        <select asp-for="StatusId" class="form-select">
+            <option value="">Todos</option>
+            @foreach (var status in Model.Data.Options.Statuses)
+            {
+                <option value="@status.Id">@status.Name</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label asp-for="DueFilter">Prazo</label>
+        <select asp-for="DueFilter" class="form-select">
+            <option value="All">Todos</option>
+            <option value="Overdue">Atrasados</option>
+            <option value="DueSoon">Próximos 7 dias</option>
+            <option value="NoDueDate">Sem prazo</option>
+        </select>
+    </div>
+    <label class="task-filters__toggle">
+        <input asp-for="ActionRequiredOnly" class="form-check-input" />
+        Com ação pendente
+    </label>
+    <label class="task-filters__toggle">
+        <input asp-for="HideFinalized" class="form-check-input" />
+        Ocultar finalizados
+    </label>
+    <button type="submit" class="button button--secondary">Filtrar</button>
+    <a asp-action="Index" class="button button--ghost">Limpar</a>
+</form>
+
+<div id="ticket-board-results" aria-live="polite">
+    <partial name="_Board" model="Model" />
+</div>

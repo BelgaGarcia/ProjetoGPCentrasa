@@ -1,23 +1,15 @@
 using System.Diagnostics;
+using CentraSA.Application.Insights;
 using CentraSA.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CentraSA.Web.Controllers;
 
-public class HomeController : Controller
+public class HomeController(IInsightService insightService) : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
-
-    public IActionResult Index()
-    {
-        return View();
-    }
+    public async Task<IActionResult> Index(CancellationToken cancellationToken) =>
+        View(await insightService.GetDashboardAsync(cancellationToken));
 
     public IActionResult Privacy()
     {

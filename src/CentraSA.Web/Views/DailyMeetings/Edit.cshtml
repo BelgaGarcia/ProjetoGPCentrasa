@@ -1,0 +1,27 @@
+@model CentraSA.Web.ViewModels.DailyMeetings.DailyMeetingBuilderViewModel
+@{
+    ViewData["Title"] = "Editar roteiro";
+}
+
+<header class="page-header">
+    <div class="page-header__copy">
+        <span class="eyebrow">Rascunho persistido</span>
+        <h1>Editar roteiro da reunião</h1>
+        <p>Altere seleção, seção, ordem e notas antes ou durante a condução.</p>
+    </div>
+    <div class="page-actions">
+        <a class="button button--secondary" asp-action="Presentation" asp-route-id="@Model.Id">Apresentar</a>
+    </div>
+</header>
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="meeting-builder-form">
+    <partial name="_BuilderForm" model="Model" />
+    <div class="form-actions meeting-builder-actions">
+        <button class="button button--primary" type="submit">Atualizar roteiro</button>
+        <a class="button button--ghost" asp-action="Details" asp-route-id="@Model.Id">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

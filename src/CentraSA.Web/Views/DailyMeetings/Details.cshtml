@@ -1,0 +1,126 @@
+@using CentraSA.Domain.Enums
+@model CentraSA.Application.DailyMeetings.DailyMeetingDetailsData
+@{
+    ViewData["Title"] = $"Reunião {Model.MeetingDate:dd/MM/yyyy}";
+    bool finished = Model.Status == MeetingStatus.Finished;
+    static string SectionLabel(MeetingSection section) => section switch
+    {
+        MeetingSection.Overdue => "Atrasados",
+        MeetingSection.DueSoon => "Próximos prazos",
+        MeetingSection.PendingTasks => "Pendências",
+        MeetingSection.Smuds => "SMUDs",
+        MeetingSection.SupportTickets => "Chamados",
+        MeetingSection.RecentlyCompleted => "Concluídos recentemente",
+        _ => section.ToString(),
+    };
+    static string SourceController(TrackedEntityType sourceType) => sourceType switch
+    {
+        TrackedEntityType.PendingTask => "PendingTasks",
+        TrackedEntityType.Smud => "Smuds",
+        TrackedEntityType.SupportTicket => "SupportTickets",
+        _ => "Home",
+    };
+    static string SourceLabel(TrackedEntityType sourceType) => sourceType switch
+    {
+        TrackedEntityType.PendingTask => "Pendência",
+        TrackedEntityType.Smud => "SMUD",
+        TrackedEntityType.SupportTicket => "Chamado",
+        _ => "Item",
+    };
+}
+
+<header class="page-header">
+    <div class="page-header__copy">
+        <span class="eyebrow">@(finished ? "Sessão finalizada" : "Rascunho persistido")</span>
+        <h1>Reunião de @Model.MeetingDate.ToString("dd/MM/yyyy")</h1>
+        <p>@Model.PresentedCount de @Model.Items.Count itens apresentados. Os dados exibidos na pauta são snapshots da preparação.</p>
+    </div>
+    <div class="page-actions">
+        <a class="button button--ghost" asp-action="Index">Todas as reuniões</a>
+        @if (!finished)
+        {
+            <a class="button button--secondary" asp-action="Edit" asp-route-id="@Model.Id">Editar roteiro</a>
+        }
+        <a class="button button--primary" asp-action="Presentation" asp-route-id="@Model.Id">@(finished ? "Consultar apresentação" : "Apresentar")</a>
+    </div>
+</header>
+
+<section class="meeting-summary-grid" aria-label="Resumo da reunião">
+    <article class="surface-card meeting-stat"><span>Status</span><strong>@(finished ? "Finalizada" : "Rascunho")</strong></article>
+    <article class="surface-card meeting-stat"><span>Itens</span><strong>@Model.Items.Count</strong></article>
+    <article class="surface-card meeting-stat"><span>Apresentados</span><strong>@Model.PresentedCount</strong></article>
+    <article class="surface-card meeting-stat"><span>Atualizada</span><strong>@Model.UpdatedAtUtc.ToLocalTime().ToString("dd/MM HH:mm")</strong></article>
+</section>
+
+@if (!string.IsNullOrWhiteSpace(Model.GeneralNotes))
+{
+    <section class="surface-card meeting-general-notes"><span class="eyebrow">Notas gerais</span><p>@Model.GeneralNotes</p></section>
+}
+
+@if (Model.Items.Count == 0)
+{
+    <div class="surface-card meeting-empty"><h2>Roteiro vazio</h2><p>Edite a preparação e selecione ao menos um item.</p></div>
+}
+else
+{
+    <div class="meeting-sections">
+        @foreach (var group in Model.Items.GroupBy(item => item.Section))
+        {
+            <section class="surface-card meeting-section">
+                <header class="meeting-section__header"><div><span class="eyebrow">Seção</span><h2>@SectionLabel(group.Key)</h2></div><span class="summary-count">@group.Count()</span></header>
+                <ol class="meeting-agenda-list">
+                    @foreach (var item in group)
+                    {
+                        <li class="meeting-agenda-item @(item.WasPresented ? "is-presented" : string.Empty)">
+                            <div class="meeting-agenda-item__content">
+                                <div class="meeting-builder-item__topline">
+                                    <span class="meeting-source-badge">@SourceLabel(item.SourceType)</span>
+                                    <span class="status-badge" data-status-color="blue">@item.SnapshotStatus</span>
+                                    @if (item.CurrentStatus != item.SnapshotStatus)
+                                    {
+                                        <span class="meeting-current-status">Agora: @item.CurrentStatus</span>
+                                    }
+                                </div>
+                                <h3>@item.SnapshotTitle</h3>
+                                <p>@(item.SnapshotResponsible ?? "Sem responsável") · @(item.SnapshotDueDate?.ToString("dd/MM/yyyy") ?? "Sem prazo")</p>
+                                @if (!string.IsNullOrWhiteSpace(item.PresentationNotes))
+                                {
+                                    <div class="meeting-item-notes"><strong>Notas</strong><p>@item.PresentationNotes</p></div>
+                                }
+                            </div>
+                            <div class="meeting-agenda-item__actions">
+                                <a class="button button--ghost button--compact" asp-controller="@SourceController(item.SourceType)" asp-action="Details" asp-route-id="@item.SourceId">Abrir original</a>
+                                @if (!finished)
+                                {
+                                    <form asp-action="MarkPresented" asp-route-id="@Model.Id" asp-route-itemId="@item.Id" method="post">
+                                        <input type="hidden" name="version" value="@Model.Version" />
+                                        <input type="hidden" name="wasPresented" value="@(!item.WasPresented ? "true" : "false")" />
+                                        <button class="button button--secondary button--compact" type="submit">@(item.WasPresented ? "Reabrir na pauta" : "Marcar apresentado")</button>
+                                    </form>
+                                    @if (!item.OriginalIsCompleted)
+                                    {
+                                        <form asp-action="CompleteOriginal" asp-route-id="@Model.Id" asp-route-itemId="@item.Id" method="post">
+                                            <input type="hidden" name="version" value="@Model.Version" />
+                                            <button class="button button--primary button--compact" type="submit">Concluir original</button>
+                                        </form>
+                                    }
+                                }
+                            </div>
+                        </li>
+                    }
+                </ol>
+            </section>
+        }
+    </div>
+}
+
+@if (!finished)
+{
+    <section class="surface-card meeting-finish-card">
+        <div><span class="eyebrow">Encerramento</span><h2>Finalizar esta reunião?</h2><p>O roteiro e seus snapshots permanecerão disponíveis somente para consulta.</p></div>
+        <form asp-action="Finish" asp-route-id="@Model.Id" method="post">
+            <input type="hidden" name="version" value="@Model.Version" />
+            <button class="button button--primary" type="submit">Finalizar reunião</button>
+        </form>
+    </section>
+}

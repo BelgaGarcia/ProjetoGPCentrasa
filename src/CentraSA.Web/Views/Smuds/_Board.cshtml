@@ -1,0 +1,108 @@
+@using CentraSA.Domain.Enums
+@model CentraSA.Web.ViewModels.Smuds.SmudIndexViewModel
+@{
+    static string PriorityLabel(PriorityLevel priority) => priority switch
+    {
+        PriorityLevel.Low => "Baixa",
+        PriorityLevel.Medium => "Média",
+        PriorityLevel.High => "Alta",
+        PriorityLevel.Critical => "Crítica",
+        _ => priority.ToString(),
+    };
+}
+
+<div class="smud-board-summary">
+    <p><strong>@Model.Data.TotalCount</strong> @(Model.Data.TotalCount == 1 ? "SMUD exibido" : "SMUDs exibidos")</p>
+    <ul class="smud-legend" aria-label="Legenda dos status">
+        @foreach (var status in Model.Data.Options.Statuses)
+        {
+            <li><span class="status-badge" data-status-color="@status.ColorToken">@status.Name</span></li>
+        }
+    </ul>
+</div>
+
+@if (Model.Data.TotalCount == 0)
+{
+    <div class="empty-state">
+        <span class="empty-state__icon" aria-hidden="true">
+            <svg class="icon"><use href="#icon-layers"></use></svg>
+        </span>
+        <h2>@(Model.Data.ArchivedOnly ? "Nenhum SMUD arquivado" : "Nenhum SMUD encontrado")</h2>
+        <p>@(Model.Data.ArchivedOnly ? "Os SMUDs arquivados aparecerão aqui." : "Ajuste os filtros ou registre a primeira customização.")</p>
+        @if (!Model.Data.ArchivedOnly)
+        {
+            <a class="button button--primary" asp-action="Create">Criar SMUD</a>
+        }
+    </div>
+}
+else
+{
+    <div class="smud-board" aria-label="Quadro de SMUDs por status">
+        @foreach (var column in Model.Data.Columns)
+        {
+            <section class="smud-column surface-card" aria-labelledby="smud-column-@column.StatusId">
+                <header class="smud-column__header">
+                    <div>
+                        <span class="smud-column__indicator" data-status-color="@column.ColorToken" aria-hidden="true"></span>
+                        <h2 id="smud-column-@column.StatusId">@column.Status</h2>
+                    </div>
+                    <span class="smud-column__total" aria-label="@column.Total cartões">@column.Total</span>
+                </header>
+
+                @if (column.Cards.Count == 0)
+                {
+                    <p class="smud-column__empty">Nenhum cartão neste status.</p>
+                }
+                else
+                {
+                    <ol class="smud-card-list">
+                        @foreach (var item in column.Cards)
+                        {
+                            <li class="smud-card @(item.IsOverdue ? "is-overdue" : string.Empty)">
+                                <div class="smud-card__heading">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="smud-card__code">@item.Code</a>
+                                    <span class="priority-chip priority-chip--@item.Priority.ToString().ToLowerInvariant()">@PriorityLabel(item.Priority)</span>
+                                </div>
+                                <h3><a asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h3>
+                                @if (!string.IsNullOrWhiteSpace(item.RequiredAction))
+                                {
+                                    <div class="smud-card__action">
+                                        <span>Ação necessária</span>
+                                        <p>@item.RequiredAction</p>
+                                    </div>
+                                }
+                                <dl class="smud-card__meta">
+                                    <div><dt>Área</dt><dd>@item.Area</dd></div>
+                                    <div><dt>Responsável</dt><dd>@(item.Person ?? "Não definido")</dd></div>
+                                    <div>
+                                        <dt>Prazo</dt>
+                                        <dd class="due-indicator @(item.IsOverdue ? "is-overdue" : item.IsDueSoon ? "is-soon" : string.Empty)">
+                                            @(item.DueDate?.ToString("dd/MM/yyyy") ?? "Sem prazo")
+                                        </dd>
+                                    </div>
+                                </dl>
+                                <div class="smud-card__actions">
+                                    @if (Model.Data.ArchivedOnly)
+                                    {
+                                        <form asp-action="Restore" asp-route-id="@item.Id" method="post">
+                                            <input type="hidden" name="version" value="@item.Version" />
+                                            <button class="button button--secondary button--compact" type="submit">Restaurar</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <a class="button button--ghost button--compact" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                                        <form asp-action="Archive" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Arquivar este SMUD?');">
+                                            <input type="hidden" name="version" value="@item.Version" />
+                                            <button class="button button--ghost button--compact" type="submit">Arquivar</button>
+                                        </form>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ol>
+                }
+            </section>
+        }
+    </div>
+}

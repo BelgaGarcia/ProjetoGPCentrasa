@@ -1,0 +1,7 @@
+@model CentraSA.Web.ViewModels.Lookups.LookupFormViewModel
+@{
+    ViewData["Title"] = "Novo cadastro auxiliar";
+}
+<header class="page-header"><div class="page-header__copy"><span class="eyebrow">Configuração</span><h1>Novo cadastro auxiliar</h1></div></header>
+<form asp-action="Create" method="post" class="surface-card lookup-form"><partial name="_Form" model="Model" /><div class="form-actions"><button class="button button--primary" type="submit">Salvar cadastro</button><a class="button button--ghost" asp-action="Index">Cancelar</a></div></form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
