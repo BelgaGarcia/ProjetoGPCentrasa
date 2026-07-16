@@ -21,7 +21,12 @@
 
     @if (Model.Items.Count == 0)
     {
-        <div class="presentation-empty"><p>Nenhuma pendência ativa para apresentar.</p></div>
+        <div class="presentation-empty">
+            <div class="presentation-empty__content">
+                <p>Nenhuma pendência ativa para apresentar.</p>
+                <a class="button button--primary" asp-action="Index" asp-fragment="quick-task">Criar outra pendência</a>
+            </div>
+        </div>
     }
     else
     {

@@ -1,6 +1,6 @@
 @if (TempData["SuccessMessage"] is string successMessage)
 {
-    <div class="app-alert app-alert--success" role="status">
+    <div class="app-alert app-alert--success" role="status" data-no-print>
         <span class="app-alert__indicator" aria-hidden="true"></span>
         <div>
             <strong>Operação concluída</strong>
@@ -11,7 +11,7 @@
 
 @if (TempData["ErrorMessage"] is string errorMessage)
 {
-    <div class="app-alert app-alert--danger" role="alert">
+    <div class="app-alert app-alert--danger" role="alert" data-no-print>
         <svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg>
         <div>
             <strong>Não foi possível concluir</strong>

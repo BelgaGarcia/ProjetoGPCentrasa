@@ -1,0 +1,36 @@
+@model CentraSA.Web.ViewModels.PendingTasks.PendingTaskQuickCreateViewModel
+
+<section id="quick-task" class="surface-card quick-task" aria-labelledby="quick-task-title">
+    <div>
+        <span class="eyebrow">Captura rápida</span>
+        <h2 id="quick-task-title">Adicionar à lista</h2>
+    </div>
+    <form asp-action="QuickCreate" method="post" class="quick-task__form">
+        <div asp-validation-summary="ModelOnly" class="quick-task__validation text-danger" role="alert"></div>
+        <div class="field-group quick-task__title">
+            <label asp-for="Title" class="visually-hidden">Título da nova pendência</label>
+            <input asp-for="Title" id="quick-title" class="form-control" maxlength="200"
+                   placeholder="O que precisa ser feito?" aria-describedby="quick-title-error" />
+            <span asp-validation-for="Title" id="quick-title-error" class="text-danger"></span>
+        </div>
+        <div class="field-group">
+            <label asp-for="ResponsibleAreaId" class="visually-hidden"></label>
+            <select asp-for="ResponsibleAreaId" id="quick-area" class="form-select"
+                    aria-describedby="quick-area-error">
+                <option value="">Área responsável</option>
+                @foreach (var area in Model.Areas)
+                {
+                    <option value="@area.Id">@area.Name</option>
+                }
+            </select>
+            <span asp-validation-for="ResponsibleAreaId" id="quick-area-error" class="text-danger"></span>
+        </div>
+        <div class="field-group">
+            <label asp-for="DueDate" class="visually-hidden"></label>
+            <input asp-for="DueDate" id="quick-due-date" type="date" class="form-control"
+                   title="Prazo" aria-describedby="quick-due-date-error" />
+            <span asp-validation-for="DueDate" id="quick-due-date-error" class="text-danger"></span>
+        </div>
+        <button class="button button--primary" type="submit">Adicionar</button>
+    </form>
+</section>

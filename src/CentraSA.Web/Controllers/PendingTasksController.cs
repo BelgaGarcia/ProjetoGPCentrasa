@@ -15,7 +15,7 @@ public sealed class PendingTasksController(
         [FromQuery] PendingTaskIndexViewModel model,
         CancellationToken cancellationToken)
     {
-        model.Data = await SearchAsync(model, archivedOnly: false, cancellationToken);
+        await PopulateIndexAsync(model, cancellationToken);
         if (Request.Headers["X-Requested-With"] == "fetch")
         {
             return PartialView("_TaskList", model);
@@ -29,18 +29,30 @@ public sealed class PendingTasksController(
         PendingTaskQuickCreateViewModel model,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            TempData["ErrorMessage"] = FirstModelError();
-            return RedirectToAction(nameof(Index));
+            PendingTaskOperationResult result = await pendingTaskService.QuickCreateAsync(
+                new PendingTaskQuickInput(
+                    model.Title,
+                    model.ResponsibleAreaId.GetValueOrDefault(),
+                    model.DueDate),
+                GetActorUserId(),
+                cancellationToken);
+            if (result.Succeeded)
+            {
+                TempData["SuccessMessage"] = "Pendência criada e adicionada à lista.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            AddQuickCreateErrors(result);
         }
 
-        PendingTaskOperationResult result = await pendingTaskService.QuickCreateAsync(
-            new PendingTaskQuickInput(model.Title, model.ResponsibleAreaId, model.DueDate),
-            GetActorUserId(),
-            cancellationToken);
-        SetOperationMessage(result, "Pendência criada e adicionada à lista.");
-        return RedirectToAction(nameof(Index));
+        var indexModel = new PendingTaskIndexViewModel
+        {
+            QuickCreate = model,
+        };
+        await PopulateIndexAsync(indexModel, cancellationToken);
+        return View(nameof(Index), indexModel);
     }
 
     [HttpGet("nova")]
@@ -253,6 +265,14 @@ public sealed class PendingTasksController(
                 Math.Max(1, model.Page)),
             cancellationToken);
 
+    private async Task PopulateIndexAsync(
+        PendingTaskIndexViewModel model,
+        CancellationToken cancellationToken)
+    {
+        model.Data = await SearchAsync(model, archivedOnly: false, cancellationToken);
+        model.QuickCreate.Areas = model.Data.Options.Areas;
+    }
+
     private Guid GetActorUserId()
     {
         string? value = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -291,13 +311,42 @@ public sealed class PendingTasksController(
 
         foreach (string error in result.Errors ?? [])
         {
-            ModelState.AddModelError(string.Empty, error);
+            string key = error switch
+            {
+                "Informe o título da pendência." => nameof(PendingTaskFormViewModel.Title),
+                "O título deve ter no máximo 200 caracteres." => nameof(PendingTaskFormViewModel.Title),
+                "Selecione a área responsável." => nameof(PendingTaskFormViewModel.ResponsibleAreaId),
+                "Selecione uma área responsável válida." => nameof(PendingTaskFormViewModel.ResponsibleAreaId),
+                "Selecione o status." => nameof(PendingTaskFormViewModel.StatusId),
+                "Selecione um status válido para pendências." => nameof(PendingTaskFormViewModel.StatusId),
+                "Selecione uma pessoa responsável válida." => nameof(PendingTaskFormViewModel.ResponsiblePersonId),
+                "Selecione uma categoria válida." => nameof(PendingTaskFormViewModel.CategoryId),
+                "O SMUD relacionado não está disponível." => nameof(PendingTaskFormViewModel.RelatedSmudId),
+                "O chamado relacionado não está disponível." => nameof(PendingTaskFormViewModel.RelatedSupportTicketId),
+                _ => string.Empty,
+            };
+
+            ModelState.AddModelError(key, error);
         }
     }
 
-    private string FirstModelError() => ModelState.Values
-        .SelectMany(value => value.Errors)
-        .Select(error => error.ErrorMessage)
-        .FirstOrDefault(message => !string.IsNullOrWhiteSpace(message))
-        ?? "Revise os dados informados.";
+    private void AddQuickCreateErrors(PendingTaskOperationResult result)
+    {
+        foreach (string error in result.Errors ?? [])
+        {
+            string key = error switch
+            {
+                "Informe o título da pendência." => nameof(PendingTaskQuickCreateViewModel.Title),
+                "O título deve ter no máximo 200 caracteres." => nameof(PendingTaskQuickCreateViewModel.Title),
+                "Selecione uma área responsável válida." => nameof(PendingTaskQuickCreateViewModel.ResponsibleAreaId),
+                _ => string.Empty,
+            };
+            ModelState.AddModelError(key, error);
+        }
+
+        if (result.Errors is not { Count: > 0 })
+        {
+            ModelState.AddModelError(string.Empty, "Não foi possível criar a pendência. Revise os dados informados.");
+        }
+    }
 }

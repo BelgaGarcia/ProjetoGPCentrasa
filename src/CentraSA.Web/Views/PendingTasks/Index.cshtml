@@ -22,34 +22,7 @@
     </div>
 </header>
 
-<section class="surface-card quick-task" aria-labelledby="quick-task-title">
-    <div>
-        <span class="eyebrow">Captura rápida</span>
-        <h2 id="quick-task-title">Adicionar à lista</h2>
-    </div>
-    <form asp-action="QuickCreate" method="post" class="quick-task__form">
-        <div class="field-group quick-task__title">
-            <label class="visually-hidden" for="quick-title">Título da nova pendência</label>
-            <input id="quick-title" name="Title" class="form-control" maxlength="200"
-                   placeholder="O que precisa ser feito?" required />
-        </div>
-        <div class="field-group">
-            <label class="visually-hidden" for="quick-area">Área responsável</label>
-            <select id="quick-area" name="ResponsibleAreaId" class="form-select" required>
-                <option value="">Área responsável</option>
-                @foreach (var area in Model.Data.Options.Areas)
-                {
-                    <option value="@area.Id">@area.Name</option>
-                }
-            </select>
-        </div>
-        <div class="field-group">
-            <label class="visually-hidden" for="quick-due-date">Prazo</label>
-            <input id="quick-due-date" name="DueDate" type="date" class="form-control" title="Prazo" />
-        </div>
-        <button class="button button--primary" type="submit">Adicionar</button>
-    </form>
-</section>
+<partial name="_QuickCreate" model="Model.QuickCreate" />
 
 <form method="get" class="surface-card task-filters" data-async-filter data-target="#pending-task-results">
     <div class="task-filters__search">
@@ -106,3 +79,7 @@
 <div id="pending-task-results" aria-live="polite">
     <partial name="_TaskList" model="Model" />
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

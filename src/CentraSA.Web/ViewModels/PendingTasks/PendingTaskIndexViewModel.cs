@@ -4,6 +4,8 @@ namespace CentraSA.Web.ViewModels.PendingTasks;
 
 public sealed class PendingTaskIndexViewModel
 {
+    public PendingTaskQuickCreateViewModel QuickCreate { get; set; } = new();
+
     public string? Search { get; set; }
 
     public Guid? AreaId { get; set; }

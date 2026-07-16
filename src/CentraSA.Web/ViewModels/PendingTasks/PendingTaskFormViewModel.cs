@@ -19,14 +19,14 @@ public sealed class PendingTaskFormViewModel
 
     [Required(ErrorMessage = "Selecione a área responsável.")]
     [Display(Name = "Área responsável")]
-    public Guid ResponsibleAreaId { get; set; }
+    public Guid? ResponsibleAreaId { get; set; }
 
     [Display(Name = "Pessoa responsável")]
     public Guid? ResponsiblePersonId { get; set; }
 
     [Required(ErrorMessage = "Selecione o status.")]
     [Display(Name = "Status")]
-    public Guid StatusId { get; set; }
+    public Guid? StatusId { get; set; }
 
     [Display(Name = "Categoria")]
     public Guid? CategoryId { get; set; }
@@ -60,9 +60,9 @@ public sealed class PendingTaskFormViewModel
     {
         Title = Title,
         Description = Description,
-        ResponsibleAreaId = ResponsibleAreaId,
+        ResponsibleAreaId = ResponsibleAreaId ?? Guid.Empty,
         ResponsiblePersonId = ResponsiblePersonId,
-        StatusId = StatusId,
+        StatusId = StatusId ?? Guid.Empty,
         CategoryId = CategoryId,
         Priority = Priority,
         DueDate = DueDate,

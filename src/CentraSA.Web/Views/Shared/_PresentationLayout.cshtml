@@ -31,7 +31,15 @@
             </button>
         </div>
     </header>
-    <main id="presentation-content" class="presentation-content" tabindex="-1">@RenderBody()</main>
+    <main id="presentation-content" class="presentation-content" tabindex="-1">
+        @if (TempData.ContainsKey("SuccessMessage") || TempData.ContainsKey("ErrorMessage"))
+        {
+            <div class="presentation-feedback" data-no-print>
+                <partial name="_FlashMessages" />
+            </div>
+        }
+        @RenderBody()
+    </main>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

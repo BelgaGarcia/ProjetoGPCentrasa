@@ -309,6 +309,20 @@
 
 .quick-task__form .field-group { margin: 0; }
 
+.quick-task__validation {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.quick-task__form .field-validation-error {
+  display: block;
+  margin-top: var(--space-2);
+}
+
+.quick-task__form .input-validation-error {
+  border-color: var(--status-red);
+}
+
 .task-filters {
   display: grid;
   align-items: end;
@@ -578,7 +592,25 @@
 .gamma-checklist span { display: block; margin-top: var(--space-1); color: #aebfd0; font-size: clamp(0.75rem, 1vw, 1rem); }
 .gamma-checklist .is-completed { opacity: 0.55; }
 .gamma-checklist .is-completed strong { text-decoration: line-through; }
+.presentation-feedback {
+  padding: var(--space-5) clamp(2rem, 5vw, 5rem) 0;
+  background: var(--surface-navy);
+}
+
+.presentation-feedback .app-alert {
+  margin: 0;
+}
+
 .presentation-empty { display: grid; min-height: 45vh; place-items: center; font-size: 1.3rem; }
+
+.presentation-empty__content {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.presentation-empty__content p { margin: 0; }
 
 .smud-filters {
   grid-template-columns: minmax(14rem, 1.4fr) repeat(4, minmax(8.5rem, 0.65fr)) auto auto auto auto;
