@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CentraSA.Application.SupportTickets;
 using CentraSA.Domain.Enums;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CentraSA.Web.ViewModels.SupportTickets;
 
@@ -58,6 +59,7 @@ public sealed class SupportTicketFormViewModel
 
     public long Version { get; set; }
 
+    [ValidateNever]
     public SupportTicketFormOptions Options { get; set; } = null!;
 
     public SupportTicketInput ToInput() => new()

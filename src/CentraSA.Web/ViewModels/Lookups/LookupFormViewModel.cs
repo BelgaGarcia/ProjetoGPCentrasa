@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CentraSA.Application.Lookups;
 using CentraSA.Domain.Enums;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CentraSA.Web.ViewModels.Lookups;
 
@@ -38,6 +39,7 @@ public sealed class LookupFormViewModel
     [Display(Name = "Ordem")]
     public int SortOrder { get; set; } = 10;
 
+    [ValidateNever]
     public IReadOnlyList<LookupAreaOption> Areas { get; set; } = [];
 
     public LookupInput ToInput() => new()

@@ -225,7 +225,27 @@ public sealed class SupportTicketsController(
 
         foreach (string error in result.Errors ?? [])
         {
-            ModelState.AddModelError(string.Empty, error);
+            string key = error switch
+            {
+                "Informe o número do chamado." => nameof(SupportTicketFormViewModel.Number),
+                "O número do chamado deve conter somente dígitos." => nameof(SupportTicketFormViewModel.Number),
+                "O número deve ter no máximo 30 caracteres." => nameof(SupportTicketFormViewModel.Number),
+                "Já existe um chamado com esse número." => nameof(SupportTicketFormViewModel.Number),
+                "Informe o título do chamado." => nameof(SupportTicketFormViewModel.Title),
+                "O título deve ter no máximo 200 caracteres." => nameof(SupportTicketFormViewModel.Title),
+                "A descrição deve ter no máximo 4.000 caracteres." => nameof(SupportTicketFormViewModel.Description),
+                "Selecione uma categoria válida para chamados." => nameof(SupportTicketFormViewModel.CategoryId),
+                "Selecione uma equipe responsável válida." => nameof(SupportTicketFormViewModel.ResponsibleAreaId),
+                "Selecione uma pessoa responsável válida." => nameof(SupportTicketFormViewModel.ResponsiblePersonId),
+                "Selecione um status válido para chamados." => nameof(SupportTicketFormViewModel.StatusId),
+                "Selecione uma prioridade válida." => nameof(SupportTicketFormViewModel.Priority),
+                "Informe a data de abertura." => nameof(SupportTicketFormViewModel.OpenedOn),
+                "A ação pendente deve ter no máximo 1.000 caracteres." => nameof(SupportTicketFormViewModel.PendingAction),
+                "As observações devem ter no máximo 4.000 caracteres." => nameof(SupportTicketFormViewModel.Notes),
+                _ => string.Empty,
+            };
+
+            ModelState.AddModelError(key, error);
         }
     }
 }

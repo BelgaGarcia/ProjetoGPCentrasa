@@ -224,7 +224,26 @@ public sealed class SmudsController(
 
         foreach (string error in result.Errors ?? [])
         {
-            ModelState.AddModelError(string.Empty, error);
+            string key = error switch
+            {
+                "Informe o código do SMUD." => nameof(SmudFormViewModel.Code),
+                "O código deve começar com SMUD." => nameof(SmudFormViewModel.Code),
+                "O código SMUD deve terminar com dígitos." => nameof(SmudFormViewModel.Code),
+                "O número do SMUD deve ser maior que zero." => nameof(SmudFormViewModel.Code),
+                "Já existe um SMUD com esse código." => nameof(SmudFormViewModel.Code),
+                "Informe o título do SMUD." => nameof(SmudFormViewModel.Title),
+                "O título deve ter no máximo 200 caracteres." => nameof(SmudFormViewModel.Title),
+                "A descrição deve ter no máximo 4.000 caracteres." => nameof(SmudFormViewModel.Description),
+                "Selecione uma área responsável válida." => nameof(SmudFormViewModel.ResponsibleAreaId),
+                "Selecione uma pessoa responsável válida." => nameof(SmudFormViewModel.ResponsiblePersonId),
+                "Selecione um status válido para SMUDs." => nameof(SmudFormViewModel.StatusId),
+                "Selecione uma prioridade válida." => nameof(SmudFormViewModel.Priority),
+                "A ação necessária deve ter no máximo 1.000 caracteres." => nameof(SmudFormViewModel.RequiredAction),
+                "As observações devem ter no máximo 4.000 caracteres." => nameof(SmudFormViewModel.Notes),
+                _ => string.Empty,
+            };
+
+            ModelState.AddModelError(key, error);
         }
     }
 }

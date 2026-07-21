@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using CentraSA.Application.PendingTasks;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CentraSA.Web.ViewModels.PendingTasks;
 
@@ -18,5 +19,6 @@ public sealed class PendingTaskQuickCreateViewModel
     [Display(Name = "Prazo")]
     public DateOnly? DueDate { get; set; }
 
+    [ValidateNever]
     public IReadOnlyList<LookupOption> Areas { get; set; } = [];
 }

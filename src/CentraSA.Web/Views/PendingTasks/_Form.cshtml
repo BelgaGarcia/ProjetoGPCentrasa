@@ -1,7 +1,7 @@
 @using CentraSA.Domain.Enums
 @model CentraSA.Web.ViewModels.PendingTasks.PendingTaskFormViewModel
 
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div asp-validation-summary="All" class="text-danger" role="alert"></div>
 <input asp-for="Id" type="hidden" />
 <input asp-for="Version" type="hidden" />
 
@@ -36,6 +36,7 @@
                 <option value="@person.Id">@person.Name@(string.IsNullOrWhiteSpace(person.Group) ? string.Empty : $" · {person.Group}")</option>
             }
         </select>
+        <span asp-validation-for="ResponsiblePersonId" class="text-danger"></span>
     </div>
     <div class="field-group">
         <label asp-for="StatusId" class="form-label"></label>
@@ -57,6 +58,7 @@
                 <option value="@category.Id">@category.Name</option>
             }
         </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
     </div>
     <div class="field-group">
         <label asp-for="Priority" class="form-label"></label>
@@ -66,10 +68,12 @@
             <option value="High">Alta</option>
             <option value="Critical">Crítica</option>
         </select>
+        <span asp-validation-for="Priority" class="text-danger"></span>
     </div>
     <div class="field-group">
         <label asp-for="DueDate" class="form-label"></label>
         <input asp-for="DueDate" type="date" class="form-control" />
+        <span asp-validation-for="DueDate" class="text-danger"></span>
     </div>
     <div class="field-group form-grid__full">
         <label asp-for="Origin" class="form-label"></label>
@@ -85,6 +89,7 @@
                 <option value="@smud.Id">@smud.Name</option>
             }
         </select>
+        <span asp-validation-for="RelatedSmudId" class="text-danger"></span>
         <span class="form-text">Use somente um dos dois vínculos.</span>
     </div>
     <div class="field-group">
@@ -96,6 +101,7 @@
                 <option value="@ticket.Id">@ticket.Name</option>
             }
         </select>
+        <span asp-validation-for="RelatedSupportTicketId" class="text-danger"></span>
     </div>
     <div class="field-group form-grid__full">
         <label asp-for="Notes" class="form-label"></label>

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CentraSA.Application.Smuds;
 using CentraSA.Domain.Enums;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CentraSA.Web.ViewModels.Smuds;
 
@@ -54,6 +55,7 @@ public sealed class SmudFormViewModel
 
     public long Version { get; set; }
 
+    [ValidateNever]
     public SmudFormOptions Options { get; set; } = null!;
 
     public SmudInput ToInput() => new()

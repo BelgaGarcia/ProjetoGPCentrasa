@@ -10,8 +10,8 @@
         <p>Essa etapa acontece uma única vez. Não existe usuário ou senha padrão.</p>
     </header>
 
-    <form method="post" class="auth-form" novalidate>
-        <div asp-validation-summary="ModelOnly" role="alert"></div>
+    <form asp-action="InitialSetup" method="post" class="auth-form" novalidate>
+        <div asp-validation-summary="All" role="alert"></div>
         <div class="field-group">
             <label asp-for="UserName" class="form-label"></label>
             <input asp-for="UserName" class="form-control" autocomplete="username" autofocus />

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CentraSA.Application.PendingTasks;
 using CentraSA.Domain.Enums;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CentraSA.Web.ViewModels.PendingTasks;
 
@@ -54,6 +55,7 @@ public sealed class PendingTaskFormViewModel
 
     public long Version { get; set; }
 
+    [ValidateNever]
     public PendingTaskFormOptions Options { get; set; } = null!;
 
     public PendingTaskInput ToInput() => new()

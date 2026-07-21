@@ -1,31 +1,31 @@
 @using CentraSA.Application.Lookups
 @model CentraSA.Web.ViewModels.Lookups.LookupFormViewModel
 
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div asp-validation-summary="All" class="text-danger" role="alert"></div>
 <input asp-for="Id" type="hidden" />
 <input asp-for="Kind" type="hidden" />
 <div class="form-grid form-grid--wide">
     <div class="field-group form-grid__full"><label asp-for="Name" class="form-label"></label><input asp-for="Name" class="form-control" autofocus /><span asp-validation-for="Name" class="text-danger"></span></div>
     @if (Model.Kind == LookupKind.TeamArea)
     {
-        <div class="field-group"><label asp-for="AreaKind" class="form-label"></label><select asp-for="AreaKind" class="form-select"><option value="InternalArea">Área interna</option><option value="ExternalTeam">Equipe externa</option></select></div>
+        <div class="field-group"><label asp-for="AreaKind" class="form-label"></label><select asp-for="AreaKind" class="form-select"><option value="InternalArea">Área interna</option><option value="ExternalTeam">Equipe externa</option></select><span asp-validation-for="AreaKind" class="text-danger"></span></div>
     }
     @if (Model.Kind == LookupKind.Person)
     {
-        <div class="field-group"><label asp-for="TeamAreaId" class="form-label"></label><select asp-for="TeamAreaId" class="form-select"><option value="">Sem área/equipe</option>@foreach (var area in Model.Areas) { <option value="@area.Id">@area.Name</option> }</select></div>
+        <div class="field-group"><label asp-for="TeamAreaId" class="form-label"></label><select asp-for="TeamAreaId" class="form-select"><option value="">Sem área/equipe</option>@foreach (var area in Model.Areas) { <option value="@area.Id">@area.Name</option> }</select><span asp-validation-for="TeamAreaId" class="text-danger"></span></div>
     }
     @if (Model.Kind is LookupKind.Status or LookupKind.Category)
     {
         <div class="field-group"><label asp-for="Code" class="form-label"></label><input asp-for="Code" class="form-control" placeholder="EXEMPLO_CODIGO" /><span asp-validation-for="Code" class="text-danger"></span></div>
-        <div class="field-group"><label asp-for="Scope" class="form-label"></label><select asp-for="Scope" class="form-select"><option value="PendingTask">Pendências</option>@if (Model.Kind == LookupKind.Status) { <option value="Smud">SMUDs</option> }<option value="SupportTicket">Chamados</option></select></div>
-        <div class="field-group"><label asp-for="SortOrder" class="form-label"></label><input asp-for="SortOrder" type="number" min="0" class="form-control" /></div>
+        <div class="field-group"><label asp-for="Scope" class="form-label"></label><select asp-for="Scope" class="form-select"><option value="PendingTask">Pendências</option>@if (Model.Kind == LookupKind.Status) { <option value="Smud">SMUDs</option> }<option value="SupportTicket">Chamados</option></select><span asp-validation-for="Scope" class="text-danger"></span></div>
+        <div class="field-group"><label asp-for="SortOrder" class="form-label"></label><input asp-for="SortOrder" type="number" min="0" class="form-control" /><span asp-validation-for="SortOrder" class="text-danger"></span></div>
     }
     @if (Model.Kind == LookupKind.Status)
     {
-        <div class="field-group"><label asp-for="LifecycleState" class="form-label"></label><select asp-for="LifecycleState" class="form-select"><option value="Active">Ativo</option><option value="Completed">Concluído</option><option value="Cancelled">Cancelado</option></select><span class="form-text">Cada módulo deve manter exatamente um status de conclusão ativo.</span></div>
+        <div class="field-group"><label asp-for="LifecycleState" class="form-label"></label><select asp-for="LifecycleState" class="form-select"><option value="Active">Ativo</option><option value="Completed">Concluído</option><option value="Cancelled">Cancelado</option></select><span asp-validation-for="LifecycleState" class="text-danger"></span><span class="form-text">Cada módulo deve manter exatamente um status de conclusão ativo.</span></div>
     }
     @if (Model.Kind != LookupKind.Person)
     {
-        <div class="field-group"><label asp-for="ColorToken" class="form-label"></label><select asp-for="ColorToken" class="form-select"><option value="blue">Azul</option><option value="yellow">Amarelo</option><option value="purple">Roxo</option><option value="cyan">Ciano</option><option value="red">Vermelho</option><option value="green">Verde</option><option value="gray">Cinza</option></select></div>
+        <div class="field-group"><label asp-for="ColorToken" class="form-label"></label><select asp-for="ColorToken" class="form-select"><option value="blue">Azul</option><option value="yellow">Amarelo</option><option value="purple">Roxo</option><option value="cyan">Ciano</option><option value="red">Vermelho</option><option value="green">Verde</option><option value="gray">Cinza</option></select><span asp-validation-for="ColorToken" class="text-danger"></span></div>
     }
 </div>

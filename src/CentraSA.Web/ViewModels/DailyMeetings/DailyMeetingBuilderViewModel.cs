@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CentraSA.Application.DailyMeetings;
 using CentraSA.Domain.Enums;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CentraSA.Web.ViewModels.DailyMeetings;
 
@@ -65,18 +66,24 @@ public sealed class DailyMeetingBuilderItemViewModel
 
     public Guid SourceId { get; set; }
 
+    [ValidateNever]
     public string SourceLabel { get; set; } = string.Empty;
 
+    [ValidateNever]
     public string Title { get; set; } = string.Empty;
 
+    [ValidateNever]
     public string Status { get; set; } = string.Empty;
 
+    [ValidateNever]
     public DateOnly? DueDate { get; set; }
 
+    [ValidateNever]
     public string? Responsible { get; set; }
 
     public bool Selected { get; set; }
 
+    [ValidateNever]
     public MeetingSection RecommendedSection { get; set; }
 
     public MeetingSection Section { get; set; }
@@ -87,6 +94,7 @@ public sealed class DailyMeetingBuilderItemViewModel
     [StringLength(2000, ErrorMessage = "As notas do item devem ter no máximo 2.000 caracteres.")]
     public string? PresentationNotes { get; set; }
 
+    [ValidateNever]
     public string SuggestionReason { get; set; } = string.Empty;
 
     public DailyMeetingSelectionInput ToInput() => new()

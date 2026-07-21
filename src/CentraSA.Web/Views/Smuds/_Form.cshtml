@@ -1,6 +1,6 @@
 @model CentraSA.Web.ViewModels.Smuds.SmudFormViewModel
 
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div asp-validation-summary="All" class="text-danger" role="alert"></div>
 <input asp-for="Id" type="hidden" />
 <input asp-for="Version" type="hidden" />
 
@@ -52,6 +52,7 @@
                 <option value="@person.Id">@person.Name@(string.IsNullOrWhiteSpace(person.Group) ? string.Empty : $" · {person.Group}")</option>
             }
         </select>
+        <span asp-validation-for="ResponsiblePersonId" class="text-danger"></span>
     </div>
     <div class="field-group">
         <label asp-for="Priority" class="form-label"></label>
@@ -61,14 +62,17 @@
             <option value="High">Alta</option>
             <option value="Critical">Crítica</option>
         </select>
+        <span asp-validation-for="Priority" class="text-danger"></span>
     </div>
     <div class="field-group">
         <label asp-for="OpenedOn" class="form-label"></label>
         <input asp-for="OpenedOn" type="date" class="form-control" />
+        <span asp-validation-for="OpenedOn" class="text-danger"></span>
     </div>
     <div class="field-group">
         <label asp-for="DueDate" class="form-label"></label>
         <input asp-for="DueDate" type="date" class="form-control" />
+        <span asp-validation-for="DueDate" class="text-danger"></span>
     </div>
     <div class="field-group form-grid__full">
         <label asp-for="RequiredAction" class="form-label"></label>

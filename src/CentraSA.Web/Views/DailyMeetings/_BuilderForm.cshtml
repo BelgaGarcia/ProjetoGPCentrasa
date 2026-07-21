@@ -13,7 +13,7 @@
     };
 }
 
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div asp-validation-summary="All" class="text-danger" role="alert"></div>
 <input asp-for="Id" type="hidden" />
 <input asp-for="Version" type="hidden" />
 
@@ -80,10 +80,12 @@
                                     <option value="@meetingSection">@SectionLabel(meetingSection)</option>
                                 }
                             </select>
+                            <span asp-validation-for="Items[i].Section" class="text-danger"></span>
                         </div>
                         <div class="field-group meeting-order-field">
                             <label asp-for="Items[i].SortOrder">Ordem</label>
                             <input asp-for="Items[i].SortOrder" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="Items[i].SortOrder" class="text-danger"></span>
                         </div>
                         <div class="field-group meeting-notes-field">
                             <label asp-for="Items[i].PresentationNotes">Notas para apresentação</label>
