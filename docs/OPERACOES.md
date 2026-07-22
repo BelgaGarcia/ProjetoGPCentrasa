@@ -40,12 +40,12 @@ Os termos abaixo evitam transformar intenção em fato:
 | Build, testes e formatação Release | **Verificado** | `V.cmd -Configuration Release`: 0 warnings, 33 testes unitários e 40 de integração aprovados. |
 | Migration mais recente | **Verificado no código** | `20260710120055_InitialCreate`, em `src/CentraSA.Infrastructure/Persistence/Migrations`. |
 | Aplicação acessível pela rede interna | **Verificado** | `GET /conta/entrar` retornou HTTP 200 em `192.168.100.15:5180`. |
-| Container, imagem e healthcheck em execução | **Verificado antes do backup; recuperação pós-backup pendente** | Às 12:40 BRT, `centrasa:1.0.1` estava `healthy`; imediatamente após o backup manual das 12:41 BRT estava `starting`. |
+| Container, imagem e healthcheck em execução | **Verificado** | `centrasa:1.0.1` voltou a `healthy` após o backup manual e permaneceu saudável durante e depois do restore drill. |
 | Stack, volume e variáveis | **Verificado** | Projeto Compose `projeto-gp-centrasa`, container `centrasa`, volume `centrasa_data` em `/data` e variáveis efetivas conferidos no host. |
 | Scripts e agendamento de backup | **Verificado** | Scripts root-owned, modo `0750` e hashes iguais aos do checkout; arquivo de cron correto e serviço `cron` ativo. |
 | Execução automática e retenção real | **Pendente** | O cron ainda não tinha entradas no journal e existem somente três snapshots; ainda não foi possível observar uma execução das 02:00 nem o descarte ao ultrapassar sete cópias. |
-| Backup frio manual | **Verificado; healthcheck final pendente** | `centrasa-20260722T154140Z` foi criado em cerca de dois segundos, após parada e reinício automáticos do container. |
-| Restauração completa/restore drill | **Pendente de execução e aceite** | Existem scripts e roteiro versionados, mas não há registro verificável de uma restauração executada. |
+| Backup frio manual | **Verificado** | `centrasa-20260722T154140Z` foi criado em cerca de dois segundos; checksums aprovados e container novamente `healthy`. |
+| Restauração completa/restore drill | **Verificado em ambiente isolado** | Snapshot restaurado em volume separado; healthcheck, HTTP, banco, chave, login, dashboard, registro e histórico aprovados. Recursos temporários removidos e produção preservada. |
 | Validação por pessoa alheia ao deploy | **Pendente** | Registrar nome, data e resultado na seção de aceite. |
 
 Não remova os estados **Pendente** apenas porque o comando parece correto.
@@ -326,9 +326,9 @@ Antes do teste manual existiam dois snapshots. O snapshot mais recente naquele
 momento, `centrasa-20260722T143039Z`, teve banco e chaves aprovados por
 `sha256sum --check`. O teste manual das 12:41 BRT criou
 `centrasa-20260722T154140Z` em cerca de dois segundos e reiniciou o container. O
-estado imediatamente após a partida era `starting`; falta registrar a transição
-final para `healthy`. Como existem somente três snapshots, a retenção máxima de
-sete ainda não foi exercitada.
+estado imediatamente após a partida era `starting` e depois voltou a `healthy`;
+os checksums do novo snapshot também foram aprovados. Como existem somente três
+snapshots, a retenção máxima de sete ainda não foi exercitada.
 
 ### Coleta obrigatória para validar o backup atual
 
@@ -416,7 +416,7 @@ Registre nesta tabela, sem dados funcionais:
 
 | Data UTC | Executor | Snapshot | Imagem | Checksums | Login/dados/histórico | Resultado |
 |---|---|---|---|---|---|---|
-| **PENDENTE** | — | — | — | — | — | Restauração ainda não comprovada nesta revisão. |
+| 22/07/2026 15:52Z | Operador autorizado | `centrasa-20260722T154140Z` | `centrasa:1.0.1` | Aprovados | Login, dashboard, registro e histórico aprovados | Aprovado; volume e container temporários removidos e produção permaneceu `healthy`. |
 
 ### Restauração de produção
 
@@ -450,7 +450,8 @@ continuidade.
 - a senha do administrador não está comprovadamente em processo formal de
   rotação e custódia: **pendência temporária**;
 - backups locais no mesmo host não cobrem perda física do servidor;
-- estado real do cron, retenção e restore drill permanece pendente nesta revisão;
+- a primeira execução automática do cron e a retenção após o oitavo snapshot
+  permanecem pendentes nesta revisão;
 - o projeto ainda usa .NET 8 e deve migrar para .NET 10 antes do fim do suporte
   da linha 8, conforme [dotnet10-upgrade.md](dotnet10-upgrade.md).
 
@@ -482,8 +483,8 @@ Antes de considerar a documentação operacional concluída:
 - [x] container, imagem, volume e variáveis coletados no host;
 - [x] scripts, cron ativo e snapshots existentes conferidos;
 - [ ] primeira execução automática das 02:00 e retenção ao ultrapassar sete snapshots observadas;
-- [ ] backup manual executado e container confirmado novamente `healthy`;
-- [ ] restore drill isolado concluído e registrado;
+- [x] backup manual executado e container confirmado novamente `healthy`;
+- [x] restore drill isolado concluído, validado funcionalmente e registrado;
 - [ ] senha e dados sensíveis revisados por responsável humano;
 - [ ] uma pessoa que não participou do deploy seguiu as seções 3 a 5 sem ajuda;
 - [ ] responsável nominal, substituto e prazo das pendências preenchidos;
