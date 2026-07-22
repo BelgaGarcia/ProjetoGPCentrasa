@@ -40,9 +40,11 @@ Os termos abaixo evitam transformar intenção em fato:
 | Build, testes e formatação Release | **Verificado** | `V.cmd -Configuration Release`: 0 warnings, 33 testes unitários e 40 de integração aprovados. |
 | Migration mais recente | **Verificado no código** | `20260710120055_InitialCreate`, em `src/CentraSA.Infrastructure/Persistence/Migrations`. |
 | Aplicação acessível pela rede interna | **Verificado** | `GET /conta/entrar` retornou HTTP 200 em `192.168.100.15:5180`. |
-| Container, imagem e healthcheck em execução | **Pendente** | A autenticação SSH disponível nesta revisão foi recusada; não houve acesso ao Docker do host. |
-| Stack `centrasa`, volume `centrasa_data` e variáveis | **Versionado; pendente no host** | Contrato de `compose.yaml`; conferir no Portainer/Docker. |
-| Cron diário, snapshots existentes e retenção real | **Pendente** | Não foi possível ler `/etc/cron.d`, journal ou `/var/backups/centrasa` no host. |
+| Container, imagem e healthcheck em execução | **Verificado antes do backup; recuperação pós-backup pendente** | Às 12:40 BRT, `centrasa:1.0.1` estava `healthy`; imediatamente após o backup manual das 12:41 BRT estava `starting`. |
+| Stack, volume e variáveis | **Verificado** | Projeto Compose `projeto-gp-centrasa`, container `centrasa`, volume `centrasa_data` em `/data` e variáveis efetivas conferidos no host. |
+| Scripts e agendamento de backup | **Verificado** | Scripts root-owned, modo `0750` e hashes iguais aos do checkout; arquivo de cron correto e serviço `cron` ativo. |
+| Execução automática e retenção real | **Pendente** | O cron ainda não tinha entradas no journal e existem somente três snapshots; ainda não foi possível observar uma execução das 02:00 nem o descarte ao ultrapassar sete cópias. |
+| Backup frio manual | **Verificado; healthcheck final pendente** | `centrasa-20260722T154140Z` foi criado em cerca de dois segundos, após parada e reinício automáticos do container. |
 | Restauração completa/restore drill | **Pendente de execução e aceite** | Existem scripts e roteiro versionados, mas não há registro verificável de uma restauração executada. |
 | Validação por pessoa alheia ao deploy | **Pendente** | Registrar nome, data e resultado na seção de aceite. |
 
@@ -115,26 +117,26 @@ quanto uma cópia sanitizada do schema anterior. Nunca edite o snapshot à mão.
 
 ## 3. Produção atual
 
-### Contrato versionado
+### Estado observado e contrato versionado
 
-| Recurso | Valor definido no repositório |
+| Recurso | Valor atual |
 |---|---|
 | Host | `srvinfra` |
-| Gerência | Portainer; stack/projeto Compose `centrasa` |
+| Gerência | Portainer; projeto Compose efetivo `projeto-gp-centrasa` |
 | Container | `centrasa` |
-| Imagem | `centrasa:<semver>`; padrão do Compose nesta revisão: `1.0.0` |
-| Release mais recente do repositório | `v1.0.1`; **a tag executada no host ainda precisa ser confirmada** |
+| Imagem efetiva | `centrasa:1.0.1` |
+| Release no host | `v1.0.1`, commit `fb7e0f2a03380f73ce20e6c43b93afbb50345f61` |
 | Endpoint | `http://192.168.100.15:5180` |
 | Porta do container | `8080` |
-| Volume | `centrasa_data`, montado em `/data` |
+| Volume | `centrasa_data`, montado em `/data`; mountpoint `/var/lib/docker/volumes/centrasa_data/_data` |
 | Banco | `/data/Data/centrasa.db` |
 | Chaves | `/data/Keys` |
 | Política de restart | `unless-stopped` |
 | Healthcheck | `GET http://127.0.0.1:8080/conta/entrar` a cada 30 s |
 
-O endpoint HTTP foi verificado, mas os demais valores desta tabela são o
-contrato de `compose.yaml`, não uma leitura do runtime. Execute a coleta abaixo
-com acesso ao host e atualize a matriz de confiança.
+Os valores desta tabela foram coletados no host em 22/07/2026 às 12:40 BRT. O
+container estava `healthy`, a porta publicada era
+`192.168.100.15:5180->8080/tcp` e o endpoint de login respondeu HTTP 200.
 
 ### Variáveis do container
 
@@ -314,8 +316,19 @@ A intenção versionada para `/etc/cron.d/centrasa-backup` é:
 0 2 * * * root /usr/local/sbin/centrasa-backup 2>&1 | /usr/bin/logger -t centrasa-backup
 ```
 
-**Estado atual: pendente de comprovação no host.** Não assuma que o arquivo foi
-instalado, que o daemon está ativo ou que existem sete cópias.
+Em 22/07/2026, os scripts instalados pertenciam a `root:root`, tinham modo
+`0750` e os mesmos hashes dos arquivos versionados. O arquivo de cron continha
+exatamente a linha acima e o serviço `cron` estava ativo. Ainda não havia entrada
+no journal porque a instalação ocorreu depois do horário diário das 02:00; a
+primeira execução automática continua pendente de observação.
+
+Antes do teste manual existiam dois snapshots. O snapshot mais recente naquele
+momento, `centrasa-20260722T143039Z`, teve banco e chaves aprovados por
+`sha256sum --check`. O teste manual das 12:41 BRT criou
+`centrasa-20260722T154140Z` em cerca de dois segundos e reiniciou o container. O
+estado imediatamente após a partida era `starting`; falta registrar a transição
+final para `healthy`. Como existem somente três snapshots, a retenção máxima de
+sete ainda não foi exercitada.
 
 ### Coleta obrigatória para validar o backup atual
 
@@ -376,6 +389,11 @@ sudo docker run --detach \
   --env Storage__DataDirectory=/data \
   --env 'AllowedHosts=localhost;127.0.0.1' \
   --mount type=volume,src=centrasa_restore_drill,dst=/data \
+  --health-cmd 'curl --fail --silent --show-error http://127.0.0.1:8080/conta/entrar' \
+  --health-interval 5s \
+  --health-timeout 3s \
+  --health-retries 12 \
+  --health-start-period 10s \
   "${IMAGE}"
 
 sudo docker inspect centrasa-restore-drill --format \
@@ -461,9 +479,10 @@ Antes de considerar a documentação operacional concluída:
 - [x] código, Compose, Dockerfile, scripts, docs e migrations auditados;
 - [x] build, testes e formatação Release executados nesta revisão;
 - [x] endpoint interno respondeu HTTP 200;
-- [ ] container, imagem, volume e variáveis coletados no host;
-- [ ] cron, journal, snapshots e retenção real conferidos;
-- [ ] backup manual executado e container novamente saudável;
+- [x] container, imagem, volume e variáveis coletados no host;
+- [x] scripts, cron ativo e snapshots existentes conferidos;
+- [ ] primeira execução automática das 02:00 e retenção ao ultrapassar sete snapshots observadas;
+- [ ] backup manual executado e container confirmado novamente `healthy`;
 - [ ] restore drill isolado concluído e registrado;
 - [ ] senha e dados sensíveis revisados por responsável humano;
 - [ ] uma pessoa que não participou do deploy seguiu as seções 3 a 5 sem ajuda;
