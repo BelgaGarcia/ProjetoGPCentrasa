@@ -24,6 +24,7 @@ executáveis no mesmo pull request.
 | Data da revisão | 22/07/2026 |
 | Commit auditado | `fb7e0f2` (`main`, tag `v1.0.1`) |
 | Prazo das pendências operacionais desta revisão | **PENDENTE — definir após designação do responsável** |
+| Próxima revalidação operacional | **29/07/2026** — execução automática das 02:00 e retenção dos snapshots |
 
 ### Matriz de confiança
 
@@ -330,6 +331,11 @@ estado imediatamente após a partida era `starting` e depois voltou a `healthy`;
 os checksums do novo snapshot também foram aprovados. Como existem somente três
 snapshots, a retenção máxima de sete ainda não foi exercitada.
 
+A próxima revalidação está registrada para **29/07/2026**. Nessa data, conferir
+o journal do cron desde 22/07/2026, listar os snapshots existentes, validar o
+checksum do mais recente e confirmar que existem no máximo sete diretórios
+`centrasa-*`. O resultado deve substituir esta pendência no mesmo documento.
+
 ### Coleta obrigatória para validar o backup atual
 
 Execute no `srvinfra` e registre o resultado sem copiar conteúdo do banco:
@@ -482,7 +488,7 @@ Antes de considerar a documentação operacional concluída:
 - [x] endpoint interno respondeu HTTP 200;
 - [x] container, imagem, volume e variáveis coletados no host;
 - [x] scripts, cron ativo e snapshots existentes conferidos;
-- [ ] primeira execução automática das 02:00 e retenção ao ultrapassar sete snapshots observadas;
+- [ ] primeira execução automática das 02:00 e retenção ao ultrapassar sete snapshots observadas — revalidação agendada para 29/07/2026;
 - [x] backup manual executado e container confirmado novamente `healthy`;
 - [x] restore drill isolado concluído, validado funcionalmente e registrado;
 - [ ] senha e dados sensíveis revisados por responsável humano;
