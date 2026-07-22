@@ -17,6 +17,9 @@ indent_size = 2
 [*.md]
 trim_trailing_whitespace = false
 
+[*.sh]
+end_of_line = lf
+
 [*.cs]
 dotnet_sort_system_directives_first = true
 csharp_new_line_before_open_brace = all

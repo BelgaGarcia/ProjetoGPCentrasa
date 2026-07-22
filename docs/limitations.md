@@ -1,10 +1,12 @@
 # Limitações conhecidas
 
-Este candidato a release foi desenhado para execução local, por um administrador
-e com SQLite. Não é uma aplicação multiusuário nem um serviço de rede.
+Este candidato a release foi desenhado para uso por um administrador por vez e
+com SQLite. Pode ser publicado na rede interna conforme o runbook do `srvinfra`,
+mas não se torna uma aplicação multiusuário ou preparada para concorrência.
 
-- Não há backup, importação, exportação ou retenção automática. A recuperação
-  suportada é a cópia manual com a aplicação encerrada.
+- Não há backup, importação, exportação ou retenção dentro da aplicação. No
+  `srvinfra`, snapshots frios e integrais são executados externamente pelo host,
+  sempre com o container parado.
 - A cópia do SQLite é integral: não preserva seletivamente uma conta ou somente
   um módulo e restaura o administrador para o estado da própria cópia.
 - Não há anexos; os registros guardam texto, relações, datas e histórico.

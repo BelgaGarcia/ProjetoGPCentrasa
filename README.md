@@ -90,6 +90,12 @@ Abra `http://127.0.0.1:5180`. No primeiro acesso, crie o administrador. A
 configuração Production mantém logs reduzidos, seed desabilitado e não expõe o
 acesso temporário usado pelo gerador de screenshots.
 
+## Deploy com Docker e Portainer
+
+O deploy interno no host `srvinfra`, incluindo build versionado, migração do
+SQLite, volume persistente, backup frio e restauração, está descrito no
+[runbook de deploy](docs/deploy-srvinfra.md).
+
 ## Gerenciar pendências
 
 Após entrar, abra **Pendências** no menu lateral. O módulo permite:

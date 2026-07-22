@@ -1,0 +1,41 @@
+name: centrasa
+
+services:
+  centrasa:
+    image: "centrasa:${CENTRASA_IMAGE_TAG:-1.0.0}"
+    pull_policy: never
+    container_name: centrasa
+    restart: unless-stopped
+    stop_grace_period: 30s
+    ports:
+      - "${CENTRASA_BIND_IP:-127.0.0.1}:5180:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      Storage__DataDirectory: /data
+      AllowedHosts: "${CENTRASA_ALLOWED_HOSTS:-192.168.100.15;localhost;127.0.0.1}"
+    volumes:
+      - centrasa_data:/data
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - --fail
+        - --silent
+        - --show-error
+        - http://127.0.0.1:8080/conta/entrar
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+volumes:
+  centrasa_data:
+    name: centrasa_data
