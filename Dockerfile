@@ -3,7 +3,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS restore
 WORKDIR /src
 
-COPY global.json Directory.Build.props CentraSA.sln ./
+COPY .editorconfig global.json Directory.Build.props CentraSA.sln ./
 COPY src/CentraSA.Domain/CentraSA.Domain.csproj src/CentraSA.Domain/
 COPY src/CentraSA.Application/CentraSA.Application.csproj src/CentraSA.Application/
 COPY src/CentraSA.Infrastructure/CentraSA.Infrastructure.csproj src/CentraSA.Infrastructure/
