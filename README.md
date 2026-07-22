@@ -213,6 +213,7 @@ As instruções completas estão no [manual local](docs/manual-local.md).
 
 ## Documentação
 
+- [Operação e continuidade — fonte única de verdade](docs/OPERACOES.md)
 - [Arquitetura](docs/architecture.md)
 - [Modelo de dados](docs/data-model.md)
 - [Manual local](docs/manual-local.md)
